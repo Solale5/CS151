@@ -28,6 +28,10 @@
     <option name="sortByType" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -92,6 +96,10 @@
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
     <state width="1680" height="276" key="GridCell.Tab.0.right/1680.25.1920.1055/0.25.1680.1025@1680.25.1920.1055" timestamp="1613176837835" />
+    <state x="496" y="434" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1613259304801">
+      <screen x="0" y="25" width="1680" height="1025" />
+    </state>
+    <state x="496" y="434" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.25.1680.1025@0.25.1680.1025" timestamp="1613259304801" />
     <state x="2343" y="250" width="670" height="676" key="search.everywhere.popup" timestamp="1613072088888">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>

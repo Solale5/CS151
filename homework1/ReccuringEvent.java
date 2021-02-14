@@ -1,9 +1,11 @@
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class ReccuringEvent {
+public class ReccuringEvent implements Comparable<ReccuringEvent> {
     // IVs for reccuring
     String name;
     LocalDate StartDate;
@@ -25,13 +27,26 @@ public class ReccuringEvent {
         }
     }
 
+    public int compareTo(ReccuringEvent that) {
+        LocalDateTime startTime1 = LocalDateTime.of(this.StartDate, this.timeInterval.start);
+        LocalDateTime startTime2 = LocalDateTime.of(that.StartDate, that.timeInterval.start);
+        if (startTime1.compareTo(startTime2) != 0) {
+            return startTime1.compareTo(startTime2);
+        } else if (this.weekDayRep.get(0).compareTo(weekDayRep.get(0)) != 0) {
+            return this.weekDayRep.get(0).compareTo(weekDayRep.get(0));
+        } else {
+            return this.name.compareTo(that.name);
+        }
+
+    }
+
     public String toString() {
-        return "ReccuringEvent{" + name.toUpperCase() +
-                " StartDate=" + StartDate +
-                ", EndDate=" + EndDate +
-                ", weekdays='" + weekdays + '\'' +
-                ", weekDayRep=" + weekDayRep +
-                ", timeInterval=" + timeInterval.start + "-" + timeInterval.end +
-                '}';
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+        return "" + name +
+                " " + StartDate.format(formatter) +
+                " to " + EndDate.format(formatter) +
+                ", on these weekdays " +
+                " " + weekDayRep +
+                " from " + timeInterval.start + "-" + timeInterval.end;
     }
 }

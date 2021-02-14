@@ -1,6 +1,7 @@
 import java.text.DateFormatSymbols;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -31,14 +32,20 @@ public class MyCalendarTester {
         sop("[V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
         while (sc.hasNextLine()) {
             String input = sc.nextLine();
-            if (input.equals("v")) {
+            if (input.equals("v") || input.equals("V")) {
                 view(sc, cal, c);
                 break;
-            } else if (input.equals("c")) {
+            } else if (input.equals("C") || input.equals("c")) {
                 create(sc, cal, c);
-            } else if (input.equals("g")) {
-            } else if (input.equals("d")) {
-            } else if (input.equals("q")) {
+                break;
+            } else if (input.equals("g") || input.equals("G")) {
+                goTo(sc, cal, c);
+                break;
+            } else if (input.equals("e") || input.equals("E")) {
+                eventList(sc, cal, c);
+                break;
+            } else if (input.equals("d") || input.equals("D")) {
+            } else if (input.equals("q") || input.equals("Q")) {
                 return;
             } else {
                 sop("thank you");
@@ -47,25 +54,76 @@ public class MyCalendarTester {
         }
     }
 
-    public static void create(Scanner sc, LocalDate cal, MyCalendar c) {
-        while (sc.hasNextLine()) {
-            String input = sc.nextLine();
+    public static void eventList(Scanner sc, LocalDate cal, MyCalendar c) {
+        sop(c.listAllEvents());
+        menu(sc, cal, c);
+    }
+
+    public static void goTo(Scanner sc, LocalDate cal, MyCalendar c) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+            sop("Enter a date to view its events M/D/YY");
+            String date = sc.nextLine();
+            LocalDate dateObject = LocalDate.parse(date, formatter);
+            if (c.getEventsOnGivenDay(dateObject).length() < 2) {
+                sop("No events scheduled");
+            } else {
+                sop(c.getEventsOnGivenDay(dateObject));
+            }
+
+            menu(sc, cal, c);
+
+        } catch (Exception e) {
+            sop("invalid format");
+            menu(sc, cal, c);
         }
     }
 
-    public static void saveToFile() {
+    public static void create(Scanner sc, LocalDate cal, MyCalendar c) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+
+            sop("Enter a Name");
+            String name = sc.nextLine();
+
+            sop("Enter a date  M/D/YY");
+            String date = sc.nextLine();
+            LocalDate dateObject = LocalDate.parse(date, formatter);
+
+            sop("Enter Start Time: 24 hour clock such as 06:00 for 6 AM and 15:30 for 3:30 PM");
+            String startTime = sc.nextLine();
+            LocalTime startTimeObject = LocalTime.parse(startTime, timeFormatter);
+
+            sop("Enter End Time");
+            String endTime = sc.nextLine();
+            LocalTime endTimeObject = LocalTime.parse(endTime, timeFormatter);
+
+
+            if (c.addNewEventFromUser(name, startTimeObject, endTimeObject, dateObject)) {
+                sop("added");
+                c.addToFile(name, date + " " + startTimeObject.toString() + " " + endTimeObject.toString());
+                c.readFromFile();
+            } else {
+                sop("there is already an event scheduled for this time and date");
+            }
+            menu(sc, cal, c);
+
+        } catch (Exception e) {
+            sop("Invalid format");
+            menu(sc, cal, c);
+
+        }
 
     }
 
-    public static void loadFromFile() {
-    }
 
     public static void view(Scanner sc, LocalDate cal, MyCalendar c) {
         sop("[D]ay view or [M]onth view ? ");
 
         while (sc.hasNextLine()) {
 
-            boolean lastEntryWasMonth = false;
+
             String input = sc.nextLine();
             if (input.equals("m")) {
 
@@ -112,12 +170,17 @@ public class MyCalendarTester {
                 System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
             }
         }
+
         if (weekDays.contains(test.getDayOfWeek())) {
-            ArrayList<ReccuringEvent> recEvents = c.reccuringEvents.get(test.getDayOfWeek());
-            for (ReccuringEvent s : recEvents) {
-                if (isInRange(test, s)) {
-                    System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
-                }
+
+            TreeSet<ReccuringEvent> ts = new TreeSet<>();
+            Collection<ArrayList<ReccuringEvent>> eventVals = c.reccuringEvents.values();
+            for (ArrayList<ReccuringEvent> ae : eventVals) {
+                ts.addAll(ae);
+            }
+
+            for (ReccuringEvent s : ts) {
+                System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
             }
         }
 
@@ -126,6 +189,7 @@ public class MyCalendarTester {
 
         while (sc.hasNextLine()) {
             String input = sc.nextLine();
+
             if (input.equals("p")) {
                 System.out.println(" " + formatter.format(test));
                 test = test.minusDays(1);
@@ -134,13 +198,19 @@ public class MyCalendarTester {
                     for (Event s : events) {
                         System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
                     }
+
+
                 }
                 if (weekDays.contains(test.getDayOfWeek())) {
+                    TreeSet<ReccuringEvent> ts = new TreeSet<>();
                     ArrayList<ReccuringEvent> recEvents = c.reccuringEvents.get(test.getDayOfWeek());
                     for (ReccuringEvent s : recEvents) {
                         if (isInRange(test, s)) {
-                            System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
+                            ts.add(s);
                         }
+                    }
+                    for (ReccuringEvent re : ts) {
+                        System.out.println(re.name + " " + re.timeInterval.start + "-" + re.timeInterval.end);
                     }
                 }
 
@@ -156,11 +226,15 @@ public class MyCalendarTester {
                     }
                 }
                 if (weekDays.contains(test.getDayOfWeek())) {
+                    TreeSet<ReccuringEvent> ts = new TreeSet<>();
                     ArrayList<ReccuringEvent> recEvents = c.reccuringEvents.get(test.getDayOfWeek());
                     for (ReccuringEvent s : recEvents) {
                         if (isInRange(test, s)) {
-                            System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
+                            ts.add(s);
                         }
+                    }
+                    for (ReccuringEvent re : ts) {
+                        System.out.println(re.name + " " + re.timeInterval.start + "-" + re.timeInterval.end);
                     }
                 }
 
@@ -210,7 +284,7 @@ public class MyCalendarTester {
         Collection<DayOfWeek> weekDays = c.reccuringEvents.keySet();
 
 
-        HashSet<Integer> dateNums = new HashSet<Integer>();
+        HashSet<Integer> dateNums = new HashSet<>();
         for (LocalDate d : dates) {
             if (d.getMonth().equals(todaydate.getMonth())) {
                 dateNums.add(d.getDayOfMonth());
@@ -231,7 +305,7 @@ public class MyCalendarTester {
         LocalDate first = todaydate.withDayOfMonth(1);
 
 //prints the first day of the month code ex 1 => Monday 2=> tuesday
-        sop(ht.get(first.getDayOfWeek() + ""));
+
 
 //gets last day of the month
 
@@ -285,12 +359,10 @@ public class MyCalendarTester {
             if (i - (8 - firstdayofmonthcode) == 7 || i - (8 - firstdayofmonthcode) == 14 || i - (8 - firstdayofmonthcode) == 21 || i - (8 - firstdayofmonthcode) == 28) {
                 sop("");
             }
-
-
-            if (i == 8 - firstdayofmonthcode) {
-                sopl(" " + i + "   ");
-            } else if (i == dayNum || dateNums.contains(i) || weekDays.contains(tester.getDayOfWeek()) && isInRange(tester, c)) {
+            if (i == dayNum || dateNums.contains(i) || weekDays.contains(tester.getDayOfWeek()) && isInRange(tester, c)) {
                 sopl("[" + i + "]" + " ");
+            } else if (i == 8 - firstdayofmonthcode) {
+                sopl(" " + i + "   ");
             } else if (i == 9 || i == 10) {
                 sopl(i + "  ");
             } else if (i > 10) {
@@ -302,7 +374,7 @@ public class MyCalendarTester {
 
 
         }
-        sop("\n" + "loading is not implemented");
+        sop("");
 
 
     }

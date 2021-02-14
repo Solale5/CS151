@@ -36,7 +36,7 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.MyCalendarTester">
     <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
@@ -49,11 +49,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="MyCalendarTester" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="MyCalendarTester" />
+      <module name="homework1" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
+      <method v="2" />
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <option name="TEST_OBJECT" value="class" />
@@ -69,6 +72,26 @@
     </recent_temporary>
   </component>
   <component name="WindowStateProjectService">
+    <state x="2420" y="257" key="#com.intellij.ide.util.MemberChooser" timestamp="1613097810625">
+      <screen x="1680" y="25" width="1920" height="1055" />
+    </state>
+    <state x="2420" y="257" key="#com.intellij.ide.util.MemberChooser/1680.25.1920.1055/0.25.1680.1025@1680.25.1920.1055" timestamp="1613097810625" />
+    <state width="1680" height="276" key="GridCell.Tab.0.bottom" timestamp="1613176837836">
+      <screen x="1680" y="25" width="1920" height="1055" />
+    </state>
+    <state width="1680" height="276" key="GridCell.Tab.0.bottom/1680.25.1920.1055/0.25.1680.1025@1680.25.1920.1055" timestamp="1613176837836" />
+    <state width="1680" height="276" key="GridCell.Tab.0.center" timestamp="1613176837835">
+      <screen x="1680" y="25" width="1920" height="1055" />
+    </state>
+    <state width="1680" height="276" key="GridCell.Tab.0.center/1680.25.1920.1055/0.25.1680.1025@1680.25.1920.1055" timestamp="1613176837835" />
+    <state width="1680" height="276" key="GridCell.Tab.0.left" timestamp="1613176837834">
+      <screen x="1680" y="25" width="1920" height="1055" />
+    </state>
+    <state width="1680" height="276" key="GridCell.Tab.0.left/1680.25.1920.1055/0.25.1680.1025@1680.25.1920.1055" timestamp="1613176837834" />
+    <state width="1680" height="276" key="GridCell.Tab.0.right" timestamp="1613176837835">
+      <screen x="1680" y="25" width="1920" height="1055" />
+    </state>
+    <state width="1680" height="276" key="GridCell.Tab.0.right/1680.25.1920.1055/0.25.1680.1025@1680.25.1920.1055" timestamp="1613176837835" />
     <state x="2343" y="250" width="670" height="676" key="search.everywhere.popup" timestamp="1613072088888">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>

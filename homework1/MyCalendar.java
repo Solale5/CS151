@@ -1,13 +1,9 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
 
 
 public class MyCalendar {
@@ -16,14 +12,71 @@ public class MyCalendar {
     TreeMap<LocalDate, ArrayList<Event>> Events;
 
     //reccuring events
-    TreeMap<DayOfWeek, ArrayList<ReccuringEvent>> reccuringEvents;
+    Hashtable<DayOfWeek, ArrayList<ReccuringEvent>> reccuringEvents;
 
     public MyCalendar() {
         Events = new TreeMap<>();
-        reccuringEvents = new TreeMap<>();
+        reccuringEvents = new Hashtable<>();
 
     }
 
+    //fix so it is in the right order
+    public String getEventsOnGivenDay(LocalDate d) {
+        String s = "";
+        if (Events.containsKey(d)) {
+
+            ArrayList<Event> evs = Events.get(d);
+            for (Event e : evs) {
+                s += e.toString() + "\n";
+            }
+        }
+
+        if (reccuringEvents.containsKey(d.getDayOfWeek())) {
+            ArrayList<ReccuringEvent> evs = reccuringEvents.get(d.getDayOfWeek());
+            for (ReccuringEvent re : evs) {
+                if (!d.isBefore(re.StartDate) && !d.isAfter(re.EndDate)) {
+                    s += re.toString() + "\n";
+                }
+            }
+        }
+
+
+        return s;
+
+    }
+
+    public String listAllEvents() {
+        String events = "Events:  \n";
+
+        if (Events.values() != null) {
+            Collection<ArrayList<Event>> eventVals = Events.values();
+            for (ArrayList<Event> ae : eventVals) {
+                for (Event e : ae) {
+                    events += e.toString() + " \n";
+
+                }
+            }
+        }
+
+
+        String recurring = " \n  Recurring Events:  \n";
+        if (reccuringEvents.values() != null) {
+            TreeSet<ReccuringEvent> ts = new TreeSet<>();
+            Collection<ArrayList<ReccuringEvent>> eventVals = reccuringEvents.values();
+            for (ArrayList<ReccuringEvent> ae : eventVals) {
+                ts.addAll(ae);
+            }
+
+            for (ReccuringEvent s : ts) {
+                recurring += s.toString() + " \n";
+            }
+        }
+
+
+        return events + recurring;
+
+
+    }
 
     public void readFromFile() {
         ArrayList<String> titles = new ArrayList<>();
@@ -79,6 +132,7 @@ public class MyCalendar {
 
     }
 
+
     public void eventStringToObject(String titles, String[] events) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
@@ -88,7 +142,7 @@ public class MyCalendar {
         LocalTime end = LocalTime.parse(events[2], timeFormatter);
 
         Event e = new Event(titles, start, end, date);
-//        this.addEvent(e);
+
 
         addEvent(e);
 
@@ -115,18 +169,52 @@ public class MyCalendar {
 
     }
 
+    public boolean addNewEventFromUser(String name, LocalTime start, LocalTime end, LocalDate day) {
+        Event e = new Event(name, start, end, day);
+        if (canAdd(e)) {
+            addEvent(e);
+
+
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
+    public void addToFile(String name, String eventInfo) {
+        try {
+
+            File myObj = new File("events.txt");
+
+            BufferedWriter out = new BufferedWriter(
+                    new FileWriter(myObj, true));
+
+            out.write(name);
+            out.newLine();
+            out.write(eventInfo);
+            out.newLine();
+            out.close();
+        } catch (IOException e) {
+            System.out.println("exception occoured" + e);
+        }
+    }
+
+
     public void addEvent(Event e) {
+        if (Events.keySet().size() < 1) {
 
-        if (Events.keySet() == null) {
 
-
+            ArrayList<Event> ar = new ArrayList<>();
+            ar.add(e);
+            Events.put(e.day, ar);
+        } else if (!Events.keySet().contains(e.day)) {
             ArrayList<Event> ar = new ArrayList<>();
             ar.add(e);
             Events.put(e.day, ar);
         } else if (canAdd(e)) {
-            ArrayList<Event> ar = new ArrayList<>();
-            ar.add(e);
-            Events.put(e.day, ar);
+            this.Events.get(e.day).add(e);
         } else {
             return;
         }
@@ -134,27 +222,38 @@ public class MyCalendar {
 
     public void addReccuringEvent(ReccuringEvent e) {
 
-        ArrayList<ReccuringEvent> ar = new ArrayList<>();
-        ar.add(e);
-        for (DayOfWeek day : e.weekDayRep) {
-            reccuringEvents.put(day, ar);
+        for (DayOfWeek d : e.weekDayRep) {
+            if (!reccuringEvents.containsKey(d)) {
+                ArrayList<ReccuringEvent> ar = new ArrayList<>();
+                ar.add(e);
+                reccuringEvents.put(d, ar);
 
+            } else {
+                reccuringEvents.get(d).add(e);
+
+            }
         }
-
     }
 
     public boolean canAdd(Event e) {
         Collection<ArrayList<ReccuringEvent>> a = reccuringEvents.values();
-        Collection<DayOfWeek> d = reccuringEvents.keySet();
-        Collection<LocalDate> l = Events.keySet();
 
-        if (l.contains(e.day)) {
-            return false;
+        Collection<DayOfWeek> d = reccuringEvents.keySet();
+
+        ArrayList<Event> eventVals = Events.get(e.day);
+        if (eventVals != null) {
+            for (Event ev : eventVals) {
+                if (e.timeInterval.overlapsWith(ev.timeInterval)) {
+                    return false;
+                }
+            }
         }
 
-        for (ArrayList<ReccuringEvent> ar : a) {
-            for (ReccuringEvent r : ar) {
-                if (e.timeInterval.overlapsWith(r.timeInterval) && d.contains(e.day.getDayOfWeek()) && e.day.isBefore(r.EndDate)) {
+        DayOfWeek eDayOfWeek = e.day.getDayOfWeek();
+        ArrayList<ReccuringEvent> ReccuringEventVals = reccuringEvents.get(eDayOfWeek);
+        if (ReccuringEventVals != null) {
+            for (ReccuringEvent re : ReccuringEventVals) {
+                if (e.timeInterval.overlapsWith(re.timeInterval) && d.contains(e.day.getDayOfWeek()) && e.day.isBefore(re.EndDate)) {
                     return false;
                 }
             }

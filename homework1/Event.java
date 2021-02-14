@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Event implements Comparable<Event> {
     String name;
@@ -34,11 +35,11 @@ public class Event implements Comparable<Event> {
     }
 
     public String toString() {
-        return "Event{" +
-                "name='" + name + '\'' +
-                ", timeInterval=" + timeInterval.start + "-" + timeInterval.end +
-                ", day=" + day +
-                '}';
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+        return "" + name +
+                " " + day.format(formatter) +
+                " " +
+                " from " + timeInterval.start + "-" + timeInterval.end;
     }
 
     public static void main(String[] args) {
