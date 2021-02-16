@@ -7,10 +7,11 @@ import java.util.ArrayList;
 
 public class ReccuringEvent implements Comparable<ReccuringEvent> {
     // IVs for reccuring
-    String name;
-    LocalDate StartDate;
-    LocalDate EndDate;
+    private String name;
+    private LocalDate StartDate;
+    private LocalDate EndDate;
 
+    private String wkdys;
     String weekdays = "MTWRFAS";
     ArrayList<DayOfWeek> weekDayRep;
     TimeInterval timeInterval;
@@ -19,6 +20,7 @@ public class ReccuringEvent implements Comparable<ReccuringEvent> {
         weekDayRep = new ArrayList<>();
         this.timeInterval = new TimeInterval(start, end);
         this.name = name;
+        this.wkdys = wkdays;
         this.StartDate = StartDay;
         this.EndDate = EndDay;
         char[] a = wkdays.toUpperCase().toCharArray();
@@ -27,9 +29,29 @@ public class ReccuringEvent implements Comparable<ReccuringEvent> {
         }
     }
 
+    public TimeInterval getTimeInterval() {
+        return timeInterval;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LocalDate getStartDate() {
+        return StartDate;
+    }
+
+    public LocalDate getEndDate() {
+        return EndDate;
+    }
+
+    public String getWeekDayCharacters() {
+        return wkdys;
+    }
+
     public int compareTo(ReccuringEvent that) {
-        LocalDateTime startTime1 = LocalDateTime.of(this.StartDate, this.timeInterval.start);
-        LocalDateTime startTime2 = LocalDateTime.of(that.StartDate, that.timeInterval.start);
+        LocalDateTime startTime1 = LocalDateTime.of(this.StartDate, this.timeInterval.getStart());
+        LocalDateTime startTime2 = LocalDateTime.of(that.StartDate, that.timeInterval.getStart());
         if (startTime1.compareTo(startTime2) != 0) {
             return startTime1.compareTo(startTime2);
         } else if (this.weekDayRep.get(0).compareTo(weekDayRep.get(0)) != 0) {
@@ -47,6 +69,6 @@ public class ReccuringEvent implements Comparable<ReccuringEvent> {
                 " to " + EndDate.format(formatter) +
                 ", on these weekdays " +
                 " " + weekDayRep +
-                " from " + timeInterval.start + "-" + timeInterval.end;
+                " from " + timeInterval.getStart() + "-" + timeInterval.getEnd();
     }
 }

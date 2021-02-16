@@ -2,7 +2,7 @@ import java.time.LocalTime;
 
 public class TimeInterval {
 
-    public LocalTime start, end;
+    private LocalTime start, end;
 
     public TimeInterval(LocalTime startT, LocalTime endT) {
         this.start = startT;

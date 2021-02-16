@@ -9,15 +9,40 @@ import java.util.*;
 public class MyCalendar {
 
     //regular events
-    TreeMap<LocalDate, ArrayList<Event>> Events;
+    private TreeMap<LocalDate, ArrayList<Event>> Events;
 
     //reccuring events
-    Hashtable<DayOfWeek, ArrayList<ReccuringEvent>> reccuringEvents;
+    private Hashtable<DayOfWeek, ArrayList<ReccuringEvent>> reccuringEvents;
+
+    // set that holds names of all events to reference when an event is created so there are no events with the same name (helps with deletion)
+    private HashSet<String> names;
 
     public MyCalendar() {
         Events = new TreeMap<>();
         reccuringEvents = new Hashtable<>();
+        names = new HashSet<>();
 
+    }
+
+    public HashSet<String> getNames() {
+        return names;
+    }
+
+    public HashSet<ReccuringEvent> bucketOfRecurringEvents() {
+        HashSet<ReccuringEvent> hs = new HashSet<>();
+        Collection<ArrayList<ReccuringEvent>> recEvents = reccuringEvents.values();
+        for (ArrayList<ReccuringEvent> ar : recEvents) {
+            hs.addAll(ar);
+        }
+        return hs;
+    }
+
+    public Hashtable<DayOfWeek, ArrayList<ReccuringEvent>> getReccuringEvents() {
+        return reccuringEvents;
+    }
+
+    public TreeMap<LocalDate, ArrayList<Event>> getEvents() {
+        return Events;
     }
 
     //fix so it is in the right order
@@ -34,7 +59,7 @@ public class MyCalendar {
         if (reccuringEvents.containsKey(d.getDayOfWeek())) {
             ArrayList<ReccuringEvent> evs = reccuringEvents.get(d.getDayOfWeek());
             for (ReccuringEvent re : evs) {
-                if (!d.isBefore(re.StartDate) && !d.isAfter(re.EndDate)) {
+                if (!d.isBefore(re.getStartDate()) && !d.isAfter(re.getEndDate())) {
                     s += re.toString() + "\n";
                 }
             }
@@ -90,6 +115,7 @@ public class MyCalendar {
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String title = myReader.nextLine();
+                names.add(title);
                 String eventInfo = myReader.nextLine();
                 String[] eventsInString = splitBySpace(eventInfo);
 
@@ -173,6 +199,10 @@ public class MyCalendar {
     }
 
     public boolean addNewEventFromUser(String name, LocalTime start, LocalTime end, LocalDate day) {
+        if (names.contains(name)) {
+            System.out.println("That name is already being used");
+            return false;
+        }
         Event e = new Event(name, start, end, day);
         if (canAdd(e)) {
             addEvent(e);
@@ -206,6 +236,7 @@ public class MyCalendar {
 
 
     public void addEvent(Event e) {
+
         if (Events.keySet().size() < 1) {
 
 
@@ -246,7 +277,7 @@ public class MyCalendar {
         ArrayList<Event> eventVals = Events.get(e.day);
         if (eventVals != null) {
             for (Event ev : eventVals) {
-                if (e.timeInterval.overlapsWith(ev.timeInterval)) {
+                if (e.getTimeInterval().overlapsWith(ev.getTimeInterval())) {
                     return false;
                 }
             }
@@ -256,7 +287,7 @@ public class MyCalendar {
         ArrayList<ReccuringEvent> ReccuringEventVals = reccuringEvents.get(eDayOfWeek);
         if (ReccuringEventVals != null) {
             for (ReccuringEvent re : ReccuringEventVals) {
-                if (e.timeInterval.overlapsWith(re.timeInterval) && d.contains(e.day.getDayOfWeek()) && e.day.isBefore(re.EndDate)) {
+                if (e.getTimeInterval().overlapsWith(re.getTimeInterval()) && d.contains(e.day.getDayOfWeek()) && e.day.isBefore(re.getEndDate())) {
                     return false;
                 }
             }
@@ -267,12 +298,57 @@ public class MyCalendar {
         return true;
     }
 
+    public boolean deleteAllEventsOnDate(LocalDate d) {
+        if (Events.containsKey(d)) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+            ArrayList<Event> evs = Events.get(d);
+            HashSet<String> stringsToBeDeletedFromFile = new HashSet<>();
+            for (Event e : evs) {
+
+                stringsToBeDeletedFromFile.add(e.getName());
+                String eventInfo = e.day.format(formatter) + " " + e.getTimeInterval().getStart() + " " + e.getTimeInterval().getEnd();
+                stringsToBeDeletedFromFile.add(eventInfo);
+
+            }
+            removeAllFromFile(stringsToBeDeletedFromFile);
+            return true;
+        }
+        return false;
+
+
+    }
+
+    private static void removeAllFromFile(HashSet<String> stringsToBeDeletedFromFile) {
+        try {
+
+            File inputFile = new File("events.txt");
+            File tempFile = new File("myTempFile.txt");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                // trim newline when comparing with lineToRemove
+                String trimmedLine = currentLine.trim();
+                if (stringsToBeDeletedFromFile.contains(trimmedLine)) continue;
+                writer.write(currentLine + System.getProperty("line.separator"));
+            }
+            writer.close();
+            reader.close();
+            boolean successful = tempFile.renameTo(inputFile);
+        } catch (IOException e) {
+            System.out.println("exception occoured" + e);
+
+        }
+    }
+
     public boolean deleteOneTimeEvent(LocalDate d, String name) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
         ArrayList<Event> evs = Events.get(d);
         for (Event e : evs) {
-            if (e.name.equals(name)) {
-                String eventInfo = e.day.format(formatter) + " " + e.timeInterval.start + " " + e.timeInterval.end;
+            if (e.getName().equals(name)) {
+                String eventInfo = e.day.format(formatter) + " " + e.getTimeInterval().getStart() + " " + e.getTimeInterval().getEnd();
                 removeFromFile(name, eventInfo);
 
 
@@ -283,7 +359,7 @@ public class MyCalendar {
 
     }
 
-    private static boolean removeFromFile(String name, String eventInfo) {
+    private static void removeFromFile(String name, String eventInfo) {
         try {
 
             File inputFile = new File("events.txt");
@@ -301,11 +377,60 @@ public class MyCalendar {
             }
             writer.close();
             reader.close();
-            return tempFile.renameTo(inputFile);
+            boolean successful = tempFile.renameTo(inputFile);
         } catch (IOException e) {
             System.out.println("exception occoured" + e);
-            return false;
+
         }
+    }
+
+    public boolean deleteRecurringEvent(String name) {
+
+        if (names.contains(name)) {
+            HashSet<ReccuringEvent> hs = bucketOfRecurringEvents();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+
+            HashSet<String> toBeDeleted = new HashSet<>();
+            for (ReccuringEvent re : hs) {
+                if (re.getName().equals(name)) {
+                    toBeDeleted.add(re.getName());
+                    String info = re.getWeekDayCharacters() + " " + re.getTimeInterval().getStart() + " " + re.getTimeInterval().getEnd() + " " + re.getStartDate().format(formatter) + " " + re.getEndDate().format(formatter);
+                    toBeDeleted.add(info);
+
+
+                }
+            }
+            removeAllFromFile(toBeDeleted);
+            return true;
+        }
+        return false;
+
+    }
+
+    public void terminate() {
+        try {
+
+            File inputFile = new File("events.txt");
+            File tempFile = new File("output.txt");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+
+                String trimmedLine = currentLine.trim();
+
+                writer.write(currentLine + System.getProperty("line.separator"));
+            }
+            writer.close();
+            reader.close();
+            
+        } catch (IOException e) {
+            System.out.println("exception occoured" + e);
+
+        }
+
     }
 
     public static void main(String[] args) {

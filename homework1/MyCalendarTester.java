@@ -21,8 +21,10 @@ public class MyCalendarTester {
         LocalDate cal = LocalDate.now();
         MyCalendar c = new MyCalendar();
         c.readFromFile();
+        printCalendar(cal, c);
 
         Scanner sc = new Scanner(System.in);
+
         menu(sc, cal, c);
 
 
@@ -48,9 +50,11 @@ public class MyCalendarTester {
                 delete(sc, cal, c);
                 break;
             } else if (input.equals("q") || input.equals("Q")) {
+                c.terminate();
+                sop("GoodBye");
                 return;
             } else {
-                sop("thank you");
+                sop("Good Bye");
                 break;
             }
         }
@@ -70,31 +74,50 @@ public class MyCalendarTester {
                     sop("Enter Date:");
                     String date = sc.nextLine();
                     LocalDate dateObject = LocalDate.parse(date, formatter);
+                    sop(c.getEventsOnGivenDay(dateObject));
                     sop("Enter the event name:");
                     String name = sc.nextLine();
                     if (c.deleteOneTimeEvent(dateObject, name)) {
                         c.readFromFile();
                         sop("deleted");
-                        menu(sc, cal, c);
-                        break;
                     } else {
                         sop("no event found with that name and date");
-                        menu(sc, cal, c);
-                        break;
                     }
+                    menu(sc, cal, c);
+                    break;
 
 
-                } else if (input.equals("A")) {
+                } else if (input.equals("A") || input.equals("a")) {
+                    sop("Enter Date:");
+                    String date = sc.nextLine();
+                    LocalDate dateObject = LocalDate.parse(date, formatter);
+                    if (c.deleteAllEventsOnDate(dateObject)) {
+                        c.readFromFile();
+                        sop("deleted");
+                    } else {
+                        sop("no event found with date");
+                    }
+                    menu(sc, cal, c);
+                    break;
 
 
-                } else if (input.equals("g")) {
-
+                } else if (input.equals("DR") || input.equals("dr")) {
+                    sop("Enter the name of the recurring event:");
+                    String name = sc.nextLine();
+                    if (c.deleteRecurringEvent(name)) {
+                        c.readFromFile();
+                        sop("deleted");
+                    } else {
+                        sop("no event found with name");
+                    }
+                    menu(sc, cal, c);
+                    break;
                 } else {
                     return;
                 }
             }
 
-           
+
         } catch (Exception e) {
             sop("invalid format");
             menu(sc, cal, c);
@@ -133,6 +156,12 @@ public class MyCalendarTester {
 
             sop("Enter a Name");
             String name = sc.nextLine();
+            if (c.getNames().contains(name)) {
+                sop("the name entered is already being used");
+                menu(sc, cal, c);
+
+
+            }
 
             sop("Enter a date  M/D/YY");
             String date = sc.nextLine();
@@ -199,7 +228,7 @@ public class MyCalendarTester {
      * @return returns true if the event is within the range of the local event
      */
     private static boolean isInRange(LocalDate test, ReccuringEvent s) {
-        return !test.isBefore(s.StartDate) && !test.isAfter(s.EndDate);
+        return !test.isBefore(s.getStartDate()) && !test.isAfter(s.getEndDate());
 
     }
 
@@ -209,25 +238,23 @@ public class MyCalendarTester {
         System.out.println(" " + formatter.format(cal));
         LocalDate test = cal;
 
-        Collection<LocalDate> dates = c.Events.keySet();
-        Collection<DayOfWeek> weekDays = c.reccuringEvents.keySet();
+        Collection<LocalDate> dates = c.getEvents().keySet();
+        Collection<DayOfWeek> weekDays = c.getReccuringEvents().keySet();
         if (dates.contains(test)) {
-            ArrayList<Event> events = c.Events.get(test);
+            ArrayList<Event> events = c.getEvents().get(test);
             for (Event s : events) {
-                System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
+                System.out.println(s.getName() + " " + s.getTimeInterval().getStart() + "-" + s.getTimeInterval().getEnd());
             }
         }
 
         if (weekDays.contains(test.getDayOfWeek())) {
 
             TreeSet<ReccuringEvent> ts = new TreeSet<>();
-            Collection<ArrayList<ReccuringEvent>> eventVals = c.reccuringEvents.values();
-            for (ArrayList<ReccuringEvent> ae : eventVals) {
-                ts.addAll(ae);
-            }
+            ArrayList<ReccuringEvent> recEvents = c.getReccuringEvents().get(test.getDayOfWeek());
+            ts.addAll(recEvents);
 
             for (ReccuringEvent s : ts) {
-                System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
+                System.out.println(s.getName() + " " + s.timeInterval.getStart() + "-" + s.timeInterval.getEnd());
             }
         }
 
@@ -241,23 +268,23 @@ public class MyCalendarTester {
                 System.out.println(" " + formatter.format(test));
                 test = test.minusDays(1);
                 if (dates.contains(test)) {
-                    ArrayList<Event> events = c.Events.get(test);
+                    ArrayList<Event> events = c.getEvents().get(test);
                     for (Event s : events) {
-                        System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
+                        System.out.println(s.getName() + " " + s.getTimeInterval().getStart() + "-" + s.getTimeInterval().getEnd());
                     }
 
 
                 }
                 if (weekDays.contains(test.getDayOfWeek())) {
                     TreeSet<ReccuringEvent> ts = new TreeSet<>();
-                    ArrayList<ReccuringEvent> recEvents = c.reccuringEvents.get(test.getDayOfWeek());
+                    ArrayList<ReccuringEvent> recEvents = c.getReccuringEvents().get(test.getDayOfWeek());
                     for (ReccuringEvent s : recEvents) {
                         if (isInRange(test, s)) {
                             ts.add(s);
                         }
                     }
                     for (ReccuringEvent re : ts) {
-                        System.out.println(re.name + " " + re.timeInterval.start + "-" + re.timeInterval.end);
+                        System.out.println(re.getName() + " " + re.timeInterval.getStart() + "-" + re.timeInterval.getEnd());
                     }
                 }
 
@@ -267,21 +294,21 @@ public class MyCalendarTester {
                 test = test.plusDays(1);
                 System.out.println(" " + formatter.format(test));
                 if (dates.contains(test)) {
-                    ArrayList<Event> events = c.Events.get(test);
+                    ArrayList<Event> events = c.getEvents().get(test);
                     for (Event s : events) {
-                        System.out.println(s.name + " " + s.timeInterval.start + "-" + s.timeInterval.end);
+                        System.out.println(s.getName() + " " + s.getTimeInterval().getStart() + "-" + s.getTimeInterval().getEnd());
                     }
                 }
                 if (weekDays.contains(test.getDayOfWeek())) {
                     TreeSet<ReccuringEvent> ts = new TreeSet<>();
-                    ArrayList<ReccuringEvent> recEvents = c.reccuringEvents.get(test.getDayOfWeek());
+                    ArrayList<ReccuringEvent> recEvents = c.getReccuringEvents().get(test.getDayOfWeek());
                     for (ReccuringEvent s : recEvents) {
                         if (isInRange(test, s)) {
                             ts.add(s);
                         }
                     }
                     for (ReccuringEvent re : ts) {
-                        System.out.println(re.name + " " + re.timeInterval.start + "-" + re.timeInterval.end);
+                        System.out.println(re.getName() + " " + re.timeInterval.getStart() + "-" + re.timeInterval.getEnd());
                     }
                 }
 
@@ -327,8 +354,8 @@ public class MyCalendarTester {
     public static void printCalendar(LocalDate todaydate, MyCalendar c) {
         //store local date
         int dayNum = todaydate.getDayOfMonth();
-        Collection<LocalDate> dates = c.Events.keySet();
-        Collection<DayOfWeek> weekDays = c.reccuringEvents.keySet();
+        Collection<LocalDate> dates = c.getEvents().keySet();
+        Collection<DayOfWeek> weekDays = c.getReccuringEvents().keySet();
 
 
         HashSet<Integer> dateNums = new HashSet<>();
@@ -427,10 +454,10 @@ public class MyCalendarTester {
     }
 
     private static boolean isInRange(LocalDate test, MyCalendar c) {
-        Collection<ArrayList<ReccuringEvent>> re = c.reccuringEvents.values();
+        Collection<ArrayList<ReccuringEvent>> re = c.getReccuringEvents().values();
         for (ArrayList<ReccuringEvent> ar : re) {
             for (ReccuringEvent s : ar) {
-                return !test.isBefore(s.StartDate) && !test.isAfter(s.EndDate);
+                return !test.isBefore(s.getStartDate()) && !test.isAfter(s.getEndDate());
             }
         }
 
