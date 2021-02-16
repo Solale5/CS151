@@ -45,12 +45,59 @@ public class MyCalendarTester {
                 eventList(sc, cal, c);
                 break;
             } else if (input.equals("d") || input.equals("D")) {
+                delete(sc, cal, c);
+                break;
             } else if (input.equals("q") || input.equals("Q")) {
                 return;
             } else {
                 sop("thank you");
                 break;
             }
+        }
+    }
+
+    public static void delete(Scanner sc, LocalDate cal, MyCalendar c) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+            sop("[S]elected  [A]ll   [DR] ");
+
+            while (sc.hasNextLine()) {
+
+
+                String input = sc.nextLine();
+                if (input.equals("S") || input.equals("s")) {
+
+                    sop("Enter Date:");
+                    String date = sc.nextLine();
+                    LocalDate dateObject = LocalDate.parse(date, formatter);
+                    sop("Enter the event name:");
+                    String name = sc.nextLine();
+                    if (c.deleteOneTimeEvent(dateObject, name)) {
+                        c.readFromFile();
+                        sop("deleted");
+                        menu(sc, cal, c);
+                        break;
+                    } else {
+                        sop("no event found with that name and date");
+                        menu(sc, cal, c);
+                        break;
+                    }
+
+
+                } else if (input.equals("A")) {
+
+
+                } else if (input.equals("g")) {
+
+                } else {
+                    return;
+                }
+            }
+
+           
+        } catch (Exception e) {
+            sop("invalid format");
+            menu(sc, cal, c);
         }
     }
 

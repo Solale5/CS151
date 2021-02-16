@@ -79,6 +79,9 @@ public class MyCalendar {
     }
 
     public void readFromFile() {
+        Events.clear();
+        reccuringEvents.clear();
+
         ArrayList<String> titles = new ArrayList<>();
         ArrayList<String[]> events = new ArrayList<>();
 
@@ -262,6 +265,47 @@ public class MyCalendar {
 
 
         return true;
+    }
+
+    public boolean deleteOneTimeEvent(LocalDate d, String name) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+        ArrayList<Event> evs = Events.get(d);
+        for (Event e : evs) {
+            if (e.name.equals(name)) {
+                String eventInfo = e.day.format(formatter) + " " + e.timeInterval.start + " " + e.timeInterval.end;
+                removeFromFile(name, eventInfo);
+
+
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    private static boolean removeFromFile(String name, String eventInfo) {
+        try {
+
+            File inputFile = new File("events.txt");
+            File tempFile = new File("myTempFile.txt");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                // trim newline when comparing with lineToRemove
+                String trimmedLine = currentLine.trim();
+                if (trimmedLine.equals(name) || trimmedLine.equals(eventInfo)) continue;
+                writer.write(currentLine + System.getProperty("line.separator"));
+            }
+            writer.close();
+            reader.close();
+            return tempFile.renameTo(inputFile);
+        } catch (IOException e) {
+            System.out.println("exception occoured" + e);
+            return false;
+        }
     }
 
     public static void main(String[] args) {
