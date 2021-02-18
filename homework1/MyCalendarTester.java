@@ -44,6 +44,13 @@ public class MyCalendarTester {
 
     }
 
+    /**
+     * menu method that appears at the start of execution
+     *
+     * @param sc  the scanner that reads user input
+     * @param cal the current date
+     * @param c   the current calendar object
+     */
     public static void menu(Scanner sc, LocalDate cal, MyCalendar c) {
         sop("[V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
         while (sc.hasNextLine()) {
@@ -74,6 +81,13 @@ public class MyCalendarTester {
         }
     }
 
+    /**
+     * user instructions for deleting an event
+     *
+     * @param sc  the scanner that reads user input
+     * @param cal the current date
+     * @param c   the current calendar object
+     */
     public static void delete(Scanner sc, LocalDate cal, MyCalendar c) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
@@ -104,8 +118,8 @@ public class MyCalendarTester {
                 } else if (input.equals("A") || input.equals("a")) {
                     sop("Enter Date:");
                     String date = sc.nextLine();
-                    LocalDate dateObject = LocalDate.parse(date, formatter);
-                    if (c.deleteAllEventsOnDate(dateObject)) {
+                    LocalDate dateObject2 = LocalDate.parse(date, formatter);
+                    if (c.deleteAllEventsOnDate(dateObject2)) {
                         c.readFromFile();
                         sop("deleted");
                     } else {
@@ -134,15 +148,30 @@ public class MyCalendarTester {
 
         } catch (Exception e) {
             sop("invalid format");
+            
             menu(sc, cal, c);
         }
     }
 
+    /**
+     * prints out the list of all events in the calender
+     *
+     * @param sc  the scanner that reads user input
+     * @param cal the current date
+     * @param c   the current calendar object
+     */
     public static void eventList(Scanner sc, LocalDate cal, MyCalendar c) {
         sop(c.listAllEvents());
         menu(sc, cal, c);
     }
 
+    /**
+     * goes to a given date in the calendar
+     *
+     * @param sc  the scanner that reads user input
+     * @param cal the current date
+     * @param c   the current calendar object
+     */
     public static void goTo(Scanner sc, LocalDate cal, MyCalendar c) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
@@ -163,6 +192,13 @@ public class MyCalendarTester {
         }
     }
 
+    /**
+     * menu for creating an event in the calendar
+     *
+     * @param sc  the scanner that reads user input
+     * @param cal the current date
+     * @param c   the current calendar object
+     */
     public static void create(Scanner sc, LocalDate cal, MyCalendar c) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
@@ -207,7 +243,13 @@ public class MyCalendarTester {
 
     }
 
-
+    /**
+     * menu for viewing by month or by day
+     *
+     * @param sc  the scanner that reads user input
+     * @param cal the current date
+     * @param c   the current calendar object
+     */
     public static void view(Scanner sc, LocalDate cal, MyCalendar c) {
         sop("[D]ay view or [M]onth view ? ");
 
@@ -246,11 +288,18 @@ public class MyCalendarTester {
 
     }
 
-
+    /**
+     * menu for viewing by day
+     *
+     * @param sc  the scanner that reads user input
+     * @param cal the current date
+     * @param c   the current calendar object
+     */
     public static void dayView(Scanner sc, LocalDate cal, MyCalendar c) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E, MMM d yyyy");
-        System.out.println(" " + formatter.format(cal));
         LocalDate test = cal;
+        System.out.println(" " + formatter.format(test));
+
 
         Collection<LocalDate> dates = c.getEvents().keySet();
         Collection<DayOfWeek> weekDays = c.getReccuringEvents().keySet();
@@ -279,8 +328,9 @@ public class MyCalendarTester {
             String input = sc.nextLine();
 
             if (input.equals("p")) {
-                System.out.println(" " + formatter.format(test));
+
                 test = test.minusDays(1);
+                System.out.println(" " + formatter.format(test));
                 if (dates.contains(test)) {
                     ArrayList<Event> events = c.getEvents().get(test);
                     for (Event s : events) {
@@ -339,6 +389,13 @@ public class MyCalendarTester {
         }
     }
 
+    /**
+     * menu for viewing by month
+     *
+     * @param sc  the scanner that reads user input
+     * @param cal the current date
+     * @param c   the current calendar object
+     */
     public static void monthView(Scanner sc, LocalDate cal, MyCalendar c) {
         printCalendar(cal, c);
         sop("[P]revious or [N]ext or [G]o back to the main menu");
@@ -365,6 +422,10 @@ public class MyCalendarTester {
         }
     }
 
+    /**
+     * @param todaydate the current date
+     * @param c         the current calendar object
+     */
     public static void printCalendar(LocalDate todaydate, MyCalendar c) {
         //store local date
         int dayNum = todaydate.getDayOfMonth();

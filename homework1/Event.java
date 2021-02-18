@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * class responsible for creating events
  *
- * @author Solomon Alemu *
+ * @author Solomon Alemu
  * @version 1.0 2/16/21
  */
 public class Event implements Comparable<Event> {
@@ -86,6 +86,16 @@ public class Event implements Comparable<Event> {
     }
 
     public static void main(String[] args) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        String s = "9:30";
+        String test = "9/28/21 9:30 11:30";
+        LocalTime startTime = LocalTime.parse(s, timeFormatter);
+        LocalTime end = LocalTime.parse(s, timeFormatter);
+        LocalDate d = LocalDate.now();
+        Event e = new Event("hi", startTime, end, d);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+        String eventInfo = e.getDay().format(formatter) + " " + e.getTimeInterval().getStart().format(timeFormatter) + " " + e.getTimeInterval().getEnd();
 
+        System.out.println(eventInfo);
     }
 }

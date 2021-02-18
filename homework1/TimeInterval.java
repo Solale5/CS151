@@ -4,7 +4,8 @@ import java.time.LocalTime;
 /**
  * class responsible for creating time intervals
  *
- * @author Solomon Alemu * @version 1.0 2/16/21
+ * @author Solomon Alemu *
+ * @version 1.0 2/16/21
  */
 public class TimeInterval {
     // start and end time IVs
@@ -24,27 +25,9 @@ public class TimeInterval {
 
 
     /**
-     * method for setting the start time
-     *
-     * @param start the starting time
-     */
-    public void setStart(LocalTime start) {
-        this.start = start;
-    }
-
-    /**
-     * method for settinf the end of interval
-     *
-     * @param end the ending time
-     */
-    public void setEnd(LocalTime end) {
-        this.end = end;
-    }
-
-    /**
      * returns the end of the interval
      *
-     * @return the end of this time interval
+     * @return the end of this time interval as a localTime Object
      */
     public LocalTime getEnd() {
         return end;
@@ -53,7 +36,7 @@ public class TimeInterval {
     /**
      * get the start of a time interval
      *
-     * @return the start of this interval
+     * @return the start of this interval as a localTime Object
      */
     public LocalTime getStart() {
         return start;

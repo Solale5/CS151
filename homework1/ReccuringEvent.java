@@ -23,12 +23,12 @@ public class ReccuringEvent implements Comparable<ReccuringEvent> {
     private TimeInterval timeInterval;
 
     /**
-     * @param name
-     * @param wkdays
-     * @param start
-     * @param end
-     * @param StartDay
-     * @param EndDay
+     * @param name     the name of the event
+     * @param wkdays   the weekday characters that the event takes place on ex: MW means the event is on mondays and wednesdays
+     * @param start    start time of event
+     * @param end      end time of the event
+     * @param StartDay start date of event
+     * @param EndDay   end day of the event
      */
     public ReccuringEvent(String name, String wkdays, LocalTime start, LocalTime end, LocalDate StartDay, LocalDate EndDay) {
         weekDayRep = new ArrayList<>();

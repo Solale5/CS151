@@ -74,6 +74,13 @@ public class MyCalendar {
     }
 
     //fix so it is in the right order
+
+    /**
+     * returns a string of events that  take place on a given day
+     *
+     * @param d the day that the event information will be about
+     * @return a string of events on that day
+     */
     public String getEventsOnGivenDay(LocalDate d) {
         String s = "";
         if (Events.containsKey(d)) {
@@ -98,6 +105,11 @@ public class MyCalendar {
 
     }
 
+    /**
+     * returns a string of all events in the calendar
+     *
+     * @return a String
+     */
     public String listAllEvents() {
         String events = "Events:  \n";
 
@@ -131,6 +143,9 @@ public class MyCalendar {
 
     }
 
+    /**
+     * reads events from events.txt  and passes them off to be parsed into event objects
+     */
     public void readFromFile() {
         Events.clear();
         reccuringEvents.clear();
@@ -172,11 +187,18 @@ public class MyCalendar {
         System.out.println("Loading Complete");
     }
 
+    /**
+     * splits a string by its spaces and returns an array of strings (used as a helper method)
+     *
+     * @param splitMe a string to be split
+     * @return a String[]
+     */
     public static String[] splitBySpace(String splitMe) {
         return splitMe.split(" ");
     }
 
-    public void eventStringToObjectGuide(ArrayList<String> titles, ArrayList<String[]> events) {
+
+    private void eventStringToObjectGuide(ArrayList<String> titles, ArrayList<String[]> events) {
         for (int i = 0; i < events.size(); i++) {
             if (events.get(i).length <= 3) {
                 eventStringToObject(titles.get(i), events.get(i));
@@ -190,10 +212,10 @@ public class MyCalendar {
     }
 
 
-    public void eventStringToObject(String titles, String[] events) {
+    private void eventStringToObject(String titles, String[] events) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalDate date = LocalDate.parse(events[0], formatter);
         LocalTime start = LocalTime.parse(events[1], timeFormatter);
         LocalTime end = LocalTime.parse(events[2], timeFormatter);
@@ -205,10 +227,10 @@ public class MyCalendar {
 
     }
 
-    public void reccuringEventStringToObject(String titles, String[] events) {
+    private void reccuringEventStringToObject(String titles, String[] events) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         String days = events[0];
 
@@ -226,6 +248,15 @@ public class MyCalendar {
 
     }
 
+    /**
+     * called by MyCalendarTester
+     *
+     * @param name  the name of the event
+     * @param start the start time of the event
+     * @param end   end time of event
+     * @param day   the day the event takes place
+     * @return if the event could be added or not
+     */
     public boolean addNewEventFromUser(String name, LocalTime start, LocalTime end, LocalDate day) {
         if (names.contains(name)) {
             System.out.println("That name is already being used");
@@ -244,6 +275,13 @@ public class MyCalendar {
 
     }
 
+    /**
+     * a method called in MyCalendarTester that is called under the condition that the user entered a valid event to be added to the calendar in
+     * the add event from user method , under this conditon we add the string of details to our events.txt
+     *
+     * @param name
+     * @param eventInfo
+     */
     public void addToFile(String name, String eventInfo) {
         try {
 
@@ -263,7 +301,7 @@ public class MyCalendar {
     }
 
 
-    public void addEvent(Event e) {
+    private void addEvent(Event e) {
 
         if (Events.keySet().size() < 1) {
 
@@ -282,7 +320,7 @@ public class MyCalendar {
         }
     }
 
-    public void addReccuringEvent(ReccuringEvent e) {
+    private void addReccuringEvent(ReccuringEvent e) {
 
         for (DayOfWeek d : e.getWeekDayRep()) {
             if (!reccuringEvents.containsKey(d)) {
@@ -297,7 +335,7 @@ public class MyCalendar {
         }
     }
 
-    public boolean canAdd(Event e) {
+    private boolean canAdd(Event e) {
         Collection<ArrayList<ReccuringEvent>> a = reccuringEvents.values();
 
         Collection<DayOfWeek> d = reccuringEvents.keySet();
@@ -326,8 +364,15 @@ public class MyCalendar {
         return true;
     }
 
+    /**
+     * a method for deleting all one time events on a given date
+     *
+     * @param d
+     * @return returns true if successful and false if not
+     */
     public boolean deleteAllEventsOnDate(LocalDate d) {
         if (Events.containsKey(d)) {
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
             ArrayList<Event> evs = Events.get(d);
             HashSet<String> stringsToBeDeletedFromFile = new HashSet<>();
@@ -371,12 +416,19 @@ public class MyCalendar {
         }
     }
 
+    /**
+     * method for deleting a specific one time event on a given date with a given name
+     *
+     * @param d    the day of the event to be deleted
+     * @param name the name of the event to be deleted
+     * @return true if deleted , false if not
+     */
     public boolean deleteOneTimeEvent(LocalDate d, String name) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
         ArrayList<Event> evs = Events.get(d);
         for (Event e : evs) {
             if (e.getName().equals(name)) {
-                String eventInfo = e.getDay().format(formatter) + " " + e.getTimeInterval().getStart() + " " + e.getTimeInterval().getEnd();
+                String eventInfo = e.getDay().format(formatter) + " " + e.getTimeInterval().getStart().toString() + " " + e.getTimeInterval().getEnd().toString();
                 removeFromFile(name, eventInfo);
 
 
@@ -412,6 +464,12 @@ public class MyCalendar {
         }
     }
 
+    /**
+     * deletes a reoccurring event of a given name
+     *
+     * @param name the name of the event
+     * @return true if deleted
+     */
     public boolean deleteRecurringEvent(String name) {
 
         if (names.contains(name)) {
@@ -435,6 +493,11 @@ public class MyCalendar {
 
     }
 
+    /**
+     * method for creating the output.txt when the program exits
+     * precondition: the user enters q for quit
+     * postcondition: output.txt is created
+     */
     public void terminate() {
         try {
 
