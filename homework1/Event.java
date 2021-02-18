@@ -3,21 +3,25 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * class responsible for creating events
+ *
+ * @author Solomon Alemu *
+ * @version 1.0 2/16/21
+ */
 public class Event implements Comparable<Event> {
     private String name;
     private TimeInterval timeInterval;
-
-
-    LocalDate day;
+    private LocalDate day;
 
 
     /**
-     * For non recurring events
+     * constructor for non recurring events
      *
-     * @param name
-     * @param start
-     * @param end
-     * @param day
+     * @param name  is the name
+     * @param start is the start time so that a time interval can be created
+     * @param end   is the ending time
+     * @param day   is the day of the one time event
      */
     public Event(String name, LocalTime start, LocalTime end, LocalDate day) {
 
@@ -27,20 +31,39 @@ public class Event implements Comparable<Event> {
 
     }
 
-
+    /**
+     * method for retrieving this events name
+     *
+     * @return the events name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * method for getting this events day of occurrence
+     *
+     * @return this date
+     */
     public LocalDate getDay() {
         return day;
     }
 
-
+    /**
+     * gets this events time interval
+     *
+     * @return the time interval
+     */
     public TimeInterval getTimeInterval() {
         return timeInterval;
     }
 
+    /**
+     * a method that compares two time events
+     *
+     * @param that is the event that this is being compared to
+     * @return returns  -1, 0, or 1 depending on the specified order of when the events take place
+     */
     public int compareTo(Event that) {
         LocalDateTime startTime1 = LocalDateTime.of(this.day, this.timeInterval.getStart());
         LocalDateTime startTime2 = LocalDateTime.of(that.day, that.timeInterval.getStart());
@@ -49,6 +72,11 @@ public class Event implements Comparable<Event> {
         return this.name.compareTo(that.name);
     }
 
+    /**
+     * formats the event
+     *
+     * @return a string of event info
+     */
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
         return "" + name +
@@ -58,15 +86,6 @@ public class Event implements Comparable<Event> {
     }
 
     public static void main(String[] args) {
-        LocalTime time1 = LocalTime.of(10, 43, 12);
-        LocalTime time2 = LocalTime.of(10, 43, 13);
 
-        LocalDate date = LocalDate.now();
-
-        String s = "rave";
-
-
-        Event e = new Event(s, time1, time2, date);
-        System.out.println(e.toString());
     }
 }

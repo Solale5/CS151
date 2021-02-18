@@ -5,13 +5,27 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * class responsible for interacting with user and running the program
+ *
+ * @author Solomon Alemu * @version 1.0 2/16/21
+ */
 public class MyCalendarTester {
 
-
+    /**
+     * shorthand i use for printing an object on a new line
+     *
+     * @param x any object
+     */
     public static void sop(Object x) {
         System.out.println(x);
     }
 
+    /**
+     * shorthand i use for printing an object on the same line
+     *
+     * @param x any object
+     */
     public static void sopl(Object x) {
         System.out.print(x);
     }
@@ -254,7 +268,7 @@ public class MyCalendarTester {
             ts.addAll(recEvents);
 
             for (ReccuringEvent s : ts) {
-                System.out.println(s.getName() + " " + s.timeInterval.getStart() + "-" + s.timeInterval.getEnd());
+                System.out.println(s.getName() + " " + s.getTimeInterval().getStart() + "-" + s.getTimeInterval().getEnd());
             }
         }
 
@@ -284,7 +298,7 @@ public class MyCalendarTester {
                         }
                     }
                     for (ReccuringEvent re : ts) {
-                        System.out.println(re.getName() + " " + re.timeInterval.getStart() + "-" + re.timeInterval.getEnd());
+                        System.out.println(re.getName() + " " + re.getTimeInterval().getStart() + "-" + re.getTimeInterval().getEnd());
                     }
                 }
 
@@ -308,7 +322,7 @@ public class MyCalendarTester {
                         }
                     }
                     for (ReccuringEvent re : ts) {
-                        System.out.println(re.getName() + " " + re.timeInterval.getStart() + "-" + re.timeInterval.getEnd());
+                        System.out.println(re.getName() + " " + re.getTimeInterval().getStart() + "-" + re.getTimeInterval().getEnd());
                     }
                 }
 

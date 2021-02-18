@@ -5,7 +5,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-
+/**
+ * class responsible for creating the calendar data structure
+ *
+ * @author Solomon Alemu
+ * @version 1.0 2/16/21
+ */
 public class MyCalendar {
 
     //regular events
@@ -17,6 +22,9 @@ public class MyCalendar {
     // set that holds names of all events to reference when an event is created so there are no events with the same name (helps with deletion)
     private HashSet<String> names;
 
+    /**
+     * creates a new calendar object
+     */
     public MyCalendar() {
         Events = new TreeMap<>();
         reccuringEvents = new Hashtable<>();
@@ -24,10 +32,20 @@ public class MyCalendar {
 
     }
 
+    /**
+     * a set of all the event names that are currently being used, useful for making sure two events to not have the same name
+     *
+     * @return HashSet<String>
+     */
     public HashSet<String> getNames() {
         return names;
     }
 
+    /**
+     * a hashset filled with all the reccuring events in the calendar
+     *
+     * @return HashSet<ReccuringEvent>
+     */
     public HashSet<ReccuringEvent> bucketOfRecurringEvents() {
         HashSet<ReccuringEvent> hs = new HashSet<>();
         Collection<ArrayList<ReccuringEvent>> recEvents = reccuringEvents.values();
@@ -37,10 +55,20 @@ public class MyCalendar {
         return hs;
     }
 
+    /**
+     * accessor method for getting the recurring event hashtable
+     *
+     * @return Hashtable<DayOfWeek, ArrayList < ReccuringEvent>>
+     */
     public Hashtable<DayOfWeek, ArrayList<ReccuringEvent>> getReccuringEvents() {
         return reccuringEvents;
     }
 
+    /**
+     * returns tree map of regular events
+     *
+     * @return TreeMap<LocalDate, ArrayList < Event>>
+     */
     public TreeMap<LocalDate, ArrayList<Event>> getEvents() {
         return Events;
     }
@@ -242,13 +270,13 @@ public class MyCalendar {
 
             ArrayList<Event> ar = new ArrayList<>();
             ar.add(e);
-            Events.put(e.day, ar);
-        } else if (!Events.keySet().contains(e.day)) {
+            Events.put(e.getDay(), ar);
+        } else if (!Events.keySet().contains(e.getDay())) {
             ArrayList<Event> ar = new ArrayList<>();
             ar.add(e);
-            Events.put(e.day, ar);
+            Events.put(e.getDay(), ar);
         } else if (canAdd(e)) {
-            this.Events.get(e.day).add(e);
+            this.Events.get(e.getDay()).add(e);
         } else {
             return;
         }
@@ -256,7 +284,7 @@ public class MyCalendar {
 
     public void addReccuringEvent(ReccuringEvent e) {
 
-        for (DayOfWeek d : e.weekDayRep) {
+        for (DayOfWeek d : e.getWeekDayRep()) {
             if (!reccuringEvents.containsKey(d)) {
                 ArrayList<ReccuringEvent> ar = new ArrayList<>();
                 ar.add(e);
@@ -274,7 +302,7 @@ public class MyCalendar {
 
         Collection<DayOfWeek> d = reccuringEvents.keySet();
 
-        ArrayList<Event> eventVals = Events.get(e.day);
+        ArrayList<Event> eventVals = Events.get(e.getDay());
         if (eventVals != null) {
             for (Event ev : eventVals) {
                 if (e.getTimeInterval().overlapsWith(ev.getTimeInterval())) {
@@ -283,11 +311,11 @@ public class MyCalendar {
             }
         }
 
-        DayOfWeek eDayOfWeek = e.day.getDayOfWeek();
+        DayOfWeek eDayOfWeek = e.getDay().getDayOfWeek();
         ArrayList<ReccuringEvent> ReccuringEventVals = reccuringEvents.get(eDayOfWeek);
         if (ReccuringEventVals != null) {
             for (ReccuringEvent re : ReccuringEventVals) {
-                if (e.getTimeInterval().overlapsWith(re.getTimeInterval()) && d.contains(e.day.getDayOfWeek()) && e.day.isBefore(re.getEndDate())) {
+                if (e.getTimeInterval().overlapsWith(re.getTimeInterval()) && d.contains(e.getDay().getDayOfWeek()) && e.getDay().isBefore(re.getEndDate())) {
                     return false;
                 }
             }
@@ -306,7 +334,7 @@ public class MyCalendar {
             for (Event e : evs) {
 
                 stringsToBeDeletedFromFile.add(e.getName());
-                String eventInfo = e.day.format(formatter) + " " + e.getTimeInterval().getStart() + " " + e.getTimeInterval().getEnd();
+                String eventInfo = e.getDay().format(formatter) + " " + e.getTimeInterval().getStart() + " " + e.getTimeInterval().getEnd();
                 stringsToBeDeletedFromFile.add(eventInfo);
 
             }
@@ -348,7 +376,7 @@ public class MyCalendar {
         ArrayList<Event> evs = Events.get(d);
         for (Event e : evs) {
             if (e.getName().equals(name)) {
-                String eventInfo = e.day.format(formatter) + " " + e.getTimeInterval().getStart() + " " + e.getTimeInterval().getEnd();
+                String eventInfo = e.getDay().format(formatter) + " " + e.getTimeInterval().getStart() + " " + e.getTimeInterval().getEnd();
                 removeFromFile(name, eventInfo);
 
 
@@ -425,7 +453,7 @@ public class MyCalendar {
             }
             writer.close();
             reader.close();
-            
+
         } catch (IOException e) {
             System.out.println("exception occoured" + e);
 
