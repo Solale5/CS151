@@ -1,18 +1,26 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * class responsible for creating the plane seat data structure
+ *
+ * @author Solomon Alemu
+ * @version 1.0 3/9/21
+ */
 public class AirplaneSeats {
-
+    //first class seats
     private Reservation[][] firstClass;
-
+    //economy seats
     private Reservation[][] economy;
-
+    //how i convert 2d array indexes to rows and columns
     private static HashMap<Integer, String> NumsToLetters;
     private static HashMap<Integer, String> firstClassNumsToLetters;
+    //data structure for keeping the order in which the reservations were made
     private ArrayList<Reservation> reservationsInOrder;
+    //the file that will be passed in by the user
+    private File theFile;
 
-    File theFile;
-
+    //initialize hashmaps independent of an object
     static {
         NumsToLetters = new HashMap<>();
         NumsToLetters.put(5, "A");
@@ -31,8 +39,14 @@ public class AirplaneSeats {
 
     }
 
+    //make sure there is no duplicate group names
     private HashSet<String> groupNames;
 
+    /**
+     * constructor for creating APS objects
+     *
+     * @param f a file passed in by the user
+     */
     public AirplaneSeats(File f) {
         firstClass = new Reservation[4][2];
 
@@ -43,6 +57,9 @@ public class AirplaneSeats {
         reservationsInOrder = new ArrayList<>();
     }
 
+    /**
+     * no args constructor for testing purposes
+     */
     public AirplaneSeats() {
         firstClass = new Reservation[4][2];
 
@@ -52,18 +69,26 @@ public class AirplaneSeats {
         reservationsInOrder = new ArrayList<>();
     }
 
+    /**
+     * returns a this hashset of group names
+     *
+     * @return a HashSet<String>
+     */
     public HashSet<String> getGroupNames() {
         return groupNames;
     }
 
+    /**
+     * method for reading from this file
+     */
     public void readFromFile() {
         try {
+            sopl("loading...");
             Scanner myReader = new Scanner(theFile);
             while (myReader.hasNextLine()) {
                 String line = myReader.nextLine();
 
                 String[] objectInfo = line.split("\\|");
-                sopl(line + "TEST");
 
 
                 if (!objectInfo[2].equals("F") && !objectInfo[2].equals("E")) {
@@ -72,23 +97,24 @@ public class AirplaneSeats {
 
 
                 } else if (objectInfo[2].equals("F") || objectInfo[2].equals("E")) {
-                    sop("hi");
+
                     Reservation l = new Reservation(objectInfo[0], objectInfo[1], objectInfo[2]);
                     searchForConsecutiveSeats(l);
-                    
+
 
                 }
 
             }
 
             myReader.close();
+            sopl("loading complete");
         } catch (Exception e) {
             e.printStackTrace();
             sopl("an error occurred");
         }
     }
 
-    public void clearTheFile() {
+    private void clearTheFile() {
         try {
             FileWriter fwOb = new FileWriter(theFile.getPath(), false);
             PrintWriter pwOb = new PrintWriter(fwOb, false);
@@ -100,6 +126,12 @@ public class AirplaneSeats {
         }
     }
 
+    /**
+     * method for writing to the file from the data structure
+     *
+     * @precondition the program must be exiting
+     * @postcondition the file is updated with contents of  reservationsInOrder
+     */
     public void writeToFile() {
         try {
             clearTheFile();
@@ -137,14 +169,17 @@ public class AirplaneSeats {
 
             out.write(economyString);
             out.close();
-            sopl(firstclassString);
-            sopl("");
-            sopl(economyString);
+
         } catch (IOException e) {
             System.out.println("exception occoured" + e);
         }
     }
 
+    /**
+     * prints out this open seats list
+     *
+     * @param sclass the service class that is desired
+     */
     public void getOpenSeatsList(String sclass) {
         if (sclass.charAt(0) == 'f') {
             sopl("First Class:");
@@ -163,7 +198,7 @@ public class AirplaneSeats {
             sopl("");
             sopl("Economy:");
             for (int col = 0; col < economy[0].length; col++) {
-                sop(col + 1 + ": ");
+                sop(col + 10 + ": ");
                 for (int row = 0; row < economy.length; row++) {
 
                     if (economy[row][col] == null) {
@@ -178,6 +213,11 @@ public class AirplaneSeats {
 
     }
 
+    /**
+     * prints out the taken seats
+     *
+     * @param sclass the service class that is desired
+     */
     public void getManifest(String sclass) {
         if (sclass.charAt(0) == 'f') {
             sopl("First Class:");
@@ -186,7 +226,7 @@ public class AirplaneSeats {
                 for (int row = 0; row < firstClass.length; row++) {
 
                     if (firstClass[row][col] != null) {
-                        sopl(col + 1 + firstClassNumsToLetters.get(row) + ": " + firstClass[row][col].getNameArray()[0] + " ");
+                        sopl(col + 1 + firstClassNumsToLetters.get(row) + ": " + firstClass[row][col].getNameArray()[0] + " " + firstClass[row][col].getNameArray()[1]);
 
                     }
                 }
@@ -199,7 +239,7 @@ public class AirplaneSeats {
                 for (int row = 0; row < economy.length; row++) {
 
                     if (economy[row][col] != null) {
-                        sopl(col + 10 + NumsToLetters.get(row) + ": " + economy[row][col].getNameArray()[0] + " ");
+                        sopl(col + 10 + NumsToLetters.get(row) + ": " + economy[row][col].getNameArray()[0] + " " + economy[row][col].getNameArray()[1]);
 
                     }
                 }
@@ -210,14 +250,21 @@ public class AirplaneSeats {
 
     }
 
+    /**
+     * cancels a reservation
+     *
+     * @param name the name of the individual
+     * @return true if successfully deleted
+     */
     public boolean cancelRegular(String name) {
 
         for (int col = 0; col < firstClass[0].length; col++) {
 
             for (int row = 0; row < firstClass.length; row++) {
-                if (firstClass[row][col] != null) {
+                if (firstClass[row][col] != null && firstClass[row][col].getGroupName() == null) {
                     String theCurrentName = firstClass[row][col].getNameArray()[0] + " " + firstClass[row][col].getNameArray()[1];
                     if (theCurrentName.toUpperCase().equals(name.toUpperCase())) {
+                        reservationsInOrder.remove(firstClass[row][col]);
                         firstClass[row][col] = null;
                         return true;
 
@@ -230,9 +277,10 @@ public class AirplaneSeats {
         for (int col = 0; col < economy[0].length; col++) {
 
             for (int row = 0; row < economy.length; row++) {
-                if (economy[row][col] != null) {
+                if (economy[row][col] != null && economy[row][col].getGroupName() == null) {
                     String theCurrentName = economy[row][col].getNameArray()[0] + " " + economy[row][col].getNameArray()[1];
                     if (theCurrentName.toUpperCase().equals(name.toUpperCase())) {
+                        reservationsInOrder.remove(economy[row][col]);
                         economy[row][col] = null;
                         return true;
                     }
@@ -241,18 +289,18 @@ public class AirplaneSeats {
 
         }
 
-        ArrayList<Reservation> tbd = new ArrayList<>();
-        for (Reservation r : reservationsInOrder) {
-            if (r.getGroupName() != null && r.getGroupName().toUpperCase().equals(name.toUpperCase())) {
-                tbd.add(r);
-            }
-        }
-        reservationsInOrder.removeAll(tbd);
+
         return false;
 
 
     }
 
+    /**
+     * cancels a  group reservation
+     *
+     * @param name the name of the group
+     * @return true if successfully deleted
+     */
     public boolean cancelGroup(String name) {
         boolean found = false;
         for (int col = 0; col < firstClass[0].length; col++) {
@@ -290,7 +338,7 @@ public class AirplaneSeats {
         }
         ArrayList<Reservation> tbd = new ArrayList<>();
         for (Reservation r : reservationsInOrder) {
-            if (r.getGroupName() != null && r.getGroupName().toUpperCase().equals(name.toUpperCase())) {
+            if (r.getGroupName() != null && r.getGroupName().toUpperCase().equals(name.toUpperCase()) && found) {
                 tbd.add(r);
             }
         }
@@ -352,6 +400,11 @@ public class AirplaneSeats {
 
     }
 
+    /**
+     * gets the number of open seats in first class
+     *
+     * @return the number of open seats an int
+     */
     public int openSeatsInFirstClass() {
         int count = 0;
         for (int col = 0; col < firstClass[0].length; col++) {
@@ -367,6 +420,11 @@ public class AirplaneSeats {
         return count;
     }
 
+    /**
+     * gets the number of open seats in economy
+     *
+     * @return the number of open seats an int
+     */
     public int openSeatsInEconomy() {
         int count = 0;
         for (int col = 0; col < economy[0].length; col++) {
@@ -383,6 +441,12 @@ public class AirplaneSeats {
 
     }
 
+    /**
+     * searches for consecutive open seats with the intent of adding reservation r, if there are open seats it adds r to the data structures
+     *
+     * @param r the reservation to be added
+     * @return true if added false if not
+     */
     public boolean searchForConsecutiveSeats(Reservation r) {
         //if the reservation is for first class execute this block of code
         if (r.getServiceClass() == 'F') {
@@ -443,7 +507,7 @@ public class AirplaneSeats {
         }
     }
 
-    //fix to match the one for economy group reservations
+
     private void consecutiveEmptySeatsColumnsToIntValuesFC(int[] emptySeatsInCol, Reservation r) {
         ArrayList<Integer> al = new ArrayList<>();
         TreeSet<Integer> columnIndexes = new TreeSet<>();
@@ -486,7 +550,7 @@ public class AirplaneSeats {
                     addGroupToFirstClass(columnIndexes, r);
                     break;
                 } else {
-                    //emptySeatsInCol = openConsecutiveSeatsArray(r);
+
                     peopleToBeSeated = peopleToBeSeated - largestNumberOfEmptySeats;
 
                     columnIndexes.add(colNumber);
@@ -546,7 +610,7 @@ public class AirplaneSeats {
                     addGroupToEconomy(columnIndexes, r);
                     break;
                 } else {
-                    //emptySeatsInCol = openConsecutiveSeatsArray(r);
+
                     peopleToBeSeated = peopleToBeSeated - largestNumberOfEmptySeats;
 
                     columnIndexes.add(colNumber);
@@ -672,9 +736,7 @@ public class AirplaneSeats {
         File test = new File("test.txt");
         AirplaneSeats a = new AirplaneSeats(test);
         a.readFromFile();
-        for (Reservation r : a.reservationsInOrder) {
-            sopl(r.getGroupName());
-        }
+
 //        Reservation placeholder = new Reservation("test e", "First", 'W');
 //        Reservation placeholder2 = new Reservation("test e", "First", 'W');
 //        a.firstClass[3][1] = placeholder;
@@ -761,6 +823,7 @@ public class AirplaneSeats {
 
     }
 
+    // truncated print methods
 
     public static void sopl(Object x) {
         System.out.println(x);

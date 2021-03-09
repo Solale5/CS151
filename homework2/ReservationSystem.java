@@ -11,7 +11,7 @@ public class ReservationSystem {
 
         try {
             File inFile = new File(filename);
-            sopl(inFile.createNewFile());
+            inFile.createNewFile();
             AirplaneSeats aps = new AirplaneSeats(inFile);
             aps.readFromFile();
             menu(sc, aps);
@@ -88,7 +88,7 @@ public class ReservationSystem {
 
             sopl("enter your seating preference ");
             sopl("W for window, M for middle, A for aisle, N for none");
-            char seatingPref = sc.nextLine().charAt(0);
+            char seatingPref = sc.nextLine().toUpperCase().charAt(0);
             if (aps.searchForFirstOpenSeatWithPreference(new Reservation(name, theirClass, seatingPref))) {
                 sopl("reserved");
                 menu(sc, aps);
@@ -163,7 +163,7 @@ public class ReservationSystem {
 
     }
 
-
+    //truncated print methods
     public static void sopl(Object x) {
         System.out.println(x);
     }
