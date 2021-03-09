@@ -23,6 +23,7 @@ public class Reservation {
 
     public Reservation(String theirName, String theirClass, char theirSeatPreference) {
         name = theirName.split(" ");
+        groupName = null;
         serviceClass = theirClass.toUpperCase().charAt(0);
         if (serviceClass != firstClass && serviceClass != economy) {
             String error = serviceClass + " is not a valid class";
@@ -48,7 +49,9 @@ public class Reservation {
         reservations = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            reservations.add(new Reservation(names[i], theirClass, 'N'));
+            Reservation r = new Reservation(names[i], theirClass, 'N');
+            r.groupName = theirGroupName;
+            reservations.add(r);
         }
 
 

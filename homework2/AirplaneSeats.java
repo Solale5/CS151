@@ -1,7 +1,5 @@
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.io.*;
+import java.util.*;
 
 public class AirplaneSeats {
 
@@ -11,6 +9,7 @@ public class AirplaneSeats {
 
     private static HashMap<Integer, String> NumsToLetters;
     private static HashMap<Integer, String> firstClassNumsToLetters;
+    private ArrayList<Reservation> reservationsInOrder;
 
     File theFile;
 
@@ -32,42 +31,300 @@ public class AirplaneSeats {
 
     }
 
+    private HashSet<String> groupNames;
+
     public AirplaneSeats(File f) {
         firstClass = new Reservation[4][2];
 
         economy = new Reservation[6][20];
 
         theFile = f;
+        groupNames = new HashSet<>();
+        reservationsInOrder = new ArrayList<>();
     }
 
     public AirplaneSeats() {
         firstClass = new Reservation[4][2];
 
-        economy = new Reservation[6][3];
+        economy = new Reservation[6][20];
+
+        groupNames = new HashSet<>();
+        reservationsInOrder = new ArrayList<>();
+    }
+
+    public HashSet<String> getGroupNames() {
+        return groupNames;
+    }
+
+    public void readFromFile() {
+        try {
+            Scanner myReader = new Scanner(theFile);
+            while (myReader.hasNextLine()) {
+                String line = myReader.nextLine();
+
+                String[] objectInfo = line.split("\\|");
+                sopl(line + "TEST");
+
+
+                if (!objectInfo[2].equals("F") && !objectInfo[2].equals("E")) {
+                    Reservation r = new Reservation(objectInfo[0], objectInfo[1], objectInfo[2].charAt(0));
+                    searchForFirstOpenSeatWithPreference(r);
+
+
+                } else if (objectInfo[2].equals("F") || objectInfo[2].equals("E")) {
+                    sop("hi");
+                    Reservation l = new Reservation(objectInfo[0], objectInfo[1], objectInfo[2]);
+                    searchForConsecutiveSeats(l);
+                    
+
+                }
+
+            }
+
+            myReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            sopl("an error occurred");
+        }
+    }
+
+    public void clearTheFile() {
+        try {
+            FileWriter fwOb = new FileWriter(theFile.getPath(), false);
+            PrintWriter pwOb = new PrintWriter(fwOb, false);
+            pwOb.flush();
+            pwOb.close();
+            fwOb.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeToFile() {
+        try {
+            clearTheFile();
+            File myObj = new File(theFile.getPath());
+
+
+            BufferedWriter out = new BufferedWriter(
+                    new FileWriter(myObj, true));
+            String firstclassString = "";
+            String economyString = "";
+            int i = 0;
+            while (i < reservationsInOrder.size()) {
+
+                //handles  group reservation
+                if (reservationsInOrder.get(i).getGroupName() != null) {
+                    economyString += "" + reservationsInOrder.get(i).getGroupName() + "|";
+                    int j = 0;
+                    while (j < reservationsInOrder.get(i).getSize()) {
+                        economyString += reservationsInOrder.get(i).getReservations().get(j).getNameArray()[0] + " " + reservationsInOrder.get(i).getReservations().get(j).getNameArray()[1];
+                        if (j < reservationsInOrder.get(i).getSize() - 1) {
+                            economyString += ",";
+                        }
+                        j++;
+                    }
+                    economyString += "|";
+                    economyString += reservationsInOrder.get(i).getServiceClass() + "\n";
+                    //handles first class individual registration
+                } else {
+                    economyString += reservationsInOrder.get(i).getNameArray()[0] + " " + reservationsInOrder.get(i).getNameArray()[1] + "|" + reservationsInOrder.get(i).getServiceClass() + "|" + reservationsInOrder.get(i).getSeatPreference() + "\n";
+
+                }
+
+                i++;
+            }
+
+            out.write(economyString);
+            out.close();
+            sopl(firstclassString);
+            sopl("");
+            sopl(economyString);
+        } catch (IOException e) {
+            System.out.println("exception occoured" + e);
+        }
+    }
+
+    public void getOpenSeatsList(String sclass) {
+        if (sclass.charAt(0) == 'f') {
+            sopl("First Class:");
+            for (int col = 0; col < firstClass[0].length; col++) {
+                sop(col + 1 + ": ");
+                for (int row = 0; row < firstClass.length; row++) {
+
+                    if (firstClass[row][col] == null) {
+                        sop(firstClassNumsToLetters.get(row) + ", ");
+
+                    }
+                }
+                sopl("");
+            }
+        } else {
+            sopl("");
+            sopl("Economy:");
+            for (int col = 0; col < economy[0].length; col++) {
+                sop(col + 1 + ": ");
+                for (int row = 0; row < economy.length; row++) {
+
+                    if (economy[row][col] == null) {
+                        sop(NumsToLetters.get(row) + ", ");
+
+                    }
+                }
+                sopl("");
+            }
+        }
 
 
     }
 
+    public void getManifest(String sclass) {
+        if (sclass.charAt(0) == 'f') {
+            sopl("First Class:");
+            for (int col = 0; col < firstClass[0].length; col++) {
+
+                for (int row = 0; row < firstClass.length; row++) {
+
+                    if (firstClass[row][col] != null) {
+                        sopl(col + 1 + firstClassNumsToLetters.get(row) + ": " + firstClass[row][col].getNameArray()[0] + " ");
+
+                    }
+                }
+
+            }
+        } else {
+            sopl("Economy:");
+            for (int col = 0; col < economy[0].length; col++) {
+
+                for (int row = 0; row < economy.length; row++) {
+
+                    if (economy[row][col] != null) {
+                        sopl(col + 10 + NumsToLetters.get(row) + ": " + economy[row][col].getNameArray()[0] + " ");
+
+                    }
+                }
+
+            }
+        }
+
+
+    }
+
+    public boolean cancelRegular(String name) {
+
+        for (int col = 0; col < firstClass[0].length; col++) {
+
+            for (int row = 0; row < firstClass.length; row++) {
+                if (firstClass[row][col] != null) {
+                    String theCurrentName = firstClass[row][col].getNameArray()[0] + " " + firstClass[row][col].getNameArray()[1];
+                    if (theCurrentName.toUpperCase().equals(name.toUpperCase())) {
+                        firstClass[row][col] = null;
+                        return true;
+
+                    }
+                }
+            }
+
+        }
+
+        for (int col = 0; col < economy[0].length; col++) {
+
+            for (int row = 0; row < economy.length; row++) {
+                if (economy[row][col] != null) {
+                    String theCurrentName = economy[row][col].getNameArray()[0] + " " + economy[row][col].getNameArray()[1];
+                    if (theCurrentName.toUpperCase().equals(name.toUpperCase())) {
+                        economy[row][col] = null;
+                        return true;
+                    }
+                }
+            }
+
+        }
+
+        ArrayList<Reservation> tbd = new ArrayList<>();
+        for (Reservation r : reservationsInOrder) {
+            if (r.getGroupName() != null && r.getGroupName().toUpperCase().equals(name.toUpperCase())) {
+                tbd.add(r);
+            }
+        }
+        reservationsInOrder.removeAll(tbd);
+        return false;
+
+
+    }
+
+    public boolean cancelGroup(String name) {
+        boolean found = false;
+        for (int col = 0; col < firstClass[0].length; col++) {
+
+            for (int row = 0; row < firstClass.length; row++) {
+                if (firstClass[row][col] != null && firstClass[row][col].getGroupName() != null) {
+                    String theCurrentName = firstClass[row][col].getGroupName();
+
+                    if (theCurrentName.toUpperCase().equals(name.toUpperCase())) {
+                        firstClass[row][col] = null;
+                        found = true;
+                        groupNames.remove(name);
+
+                    }
+                }
+            }
+
+        }
+
+        for (int col = 0; col < economy[0].length; col++) {
+
+            for (int row = 0; row < economy.length; row++) {
+                if (economy[row][col] != null && economy[row][col].getGroupName() != null) {
+                    String theCurrentName = economy[row][col].getGroupName();
+
+                    if (theCurrentName.toUpperCase().equals(name.toUpperCase())) {
+                        economy[row][col] = null;
+                        found = true;
+                        groupNames.remove(name);
+
+                    }
+                }
+            }
+
+        }
+        ArrayList<Reservation> tbd = new ArrayList<>();
+        for (Reservation r : reservationsInOrder) {
+            if (r.getGroupName() != null && r.getGroupName().toUpperCase().equals(name.toUpperCase())) {
+                tbd.add(r);
+            }
+        }
+        reservationsInOrder.removeAll(tbd);
+        return found;
+
+    }
+
+
     private void addNewReservationFromUser(Reservation r, int row, int col) {
         firstClass[row][col] = r;
+        reservationsInOrder.add(r);
 
     }
 
     private void addNewReservationFromUserEconomy(Reservation r, int row, int col) {
         economy[row][col] = r;
+        reservationsInOrder.add(r);
 
     }
 
     private void addGroupToFirstClass(TreeSet<Integer> ts, Reservation r) {
-
+        reservationsInOrder.add(r);
         ArrayList<Integer> a = new ArrayList<>(ts);
+
         int i = 0;
-        for (int col = 0; col < firstClass[0].length; col++) {
+        for (int col = 0; col < a.size(); col++) {
             for (int row = 0; row < firstClass.length; row++) {
 
                 if (firstClass[row][a.get(col)] == null && i < r.getReservations().size()) {
+
                     firstClass[row][a.get(col)] = r.getReservations().get(i);
                     i++;
+                    groupNames.add(r.getGroupName());
                 }
 
             }
@@ -75,12 +332,11 @@ public class AirplaneSeats {
 
     }
 
+    ////////////
     private void addGroupToEconomy(TreeSet<Integer> ts, Reservation r) {
+        reservationsInOrder.add(r);
         ArrayList<Integer> a = new ArrayList<>(ts);
-        //testing purposes
-        for (Integer i : a) {
-            sopl(i);
-        }
+
         int i = 0;
         for (int col = 0; col < a.size(); col++) {
             for (int row = 0; row < economy.length; row++) {
@@ -88,10 +344,12 @@ public class AirplaneSeats {
                 if (economy[row][a.get(col)] == null && i < r.getReservations().size()) {
                     economy[row][a.get(col)] = r.getReservations().get(i);
                     i++;
+                    groupNames.add(r.getGroupName());
                 }
 
             }
         }
+
     }
 
     public int openSeatsInFirstClass() {
@@ -185,63 +443,7 @@ public class AirplaneSeats {
         }
     }
 
-    private int[] openConsecutiveSeatsArray(Reservation r) {
-        int[] emptySeatsInCol;
-        //if the reservation is for first class execute this block of code
-        if (r.getServiceClass() == 'F') {
-
-            //array to store the columns number of consecutive empty seats
-            emptySeatsInCol = new int[firstClass[0].length];
-
-            for (int col = 0; col < firstClass[0].length; col++) {
-                int count = 0;
-                for (int row = 0; row < firstClass.length; row++) {
-
-                    if (firstClass[row][col] == null) {
-                        count++;
-                        emptySeatsInCol[col] = count;
-                    } else {
-                        if (count > 0 && row != 3) {
-                            count--;
-                        }
-                        emptySeatsInCol[col] = count;
-                    }
-                }
-            }
-            //now emptySeatsInCol[] will have the number of consecutive empty seats in each col
-
-
-            return emptySeatsInCol;
-
-
-            //if the reservation is for economy execute this block of code
-        } else {
-
-            emptySeatsInCol = new int[economy[0].length];
-            for (int col = 0; col < economy[0].length; col++) {
-                int count = 0;
-                for (int row = 0; row < economy.length; row++) {
-
-                    if (economy[row][col] == null) {
-                        count++;
-                        emptySeatsInCol[col] = count;
-                    } else {
-                        if (count > 0 && row != 5) {
-                            count--;
-                        }
-                        emptySeatsInCol[col] = count;
-                    }
-                }
-            }
-            //now emptySeatsInCol[] will have the number of consecutive empty seats in each col
-
-
-            return emptySeatsInCol;
-
-        }
-
-    }
-
+    //fix to match the one for economy group reservations
     private void consecutiveEmptySeatsColumnsToIntValuesFC(int[] emptySeatsInCol, Reservation r) {
         ArrayList<Integer> al = new ArrayList<>();
         TreeSet<Integer> columnIndexes = new TreeSet<>();
@@ -251,8 +453,14 @@ public class AirplaneSeats {
         if (al.contains(r.getSize())) {
 
             columnIndexes.add(al.indexOf(r.getSize()));
-            addGroupToEconomy(columnIndexes, r);
+            addGroupToFirstClass(columnIndexes, r);
 
+        } else if (al.contains(r.getSize() + 1)) {
+            columnIndexes.add(al.indexOf(r.getSize() + 1));
+            addGroupToFirstClass(columnIndexes, r);
+        } else if (al.contains(r.getSize() + 2)) {
+            columnIndexes.add(al.indexOf(r.getSize() + 2));
+            addGroupToFirstClass(columnIndexes, r);
         } else {
 
 
@@ -265,8 +473,12 @@ public class AirplaneSeats {
                     if (emptySeatsInCol[i] > largestNumberOfEmptySeats && !columnIndexes.contains(i)) {
                         largestNumberOfEmptySeats = emptySeatsInCol[i];
                         largestNumberOfEmptySeatscolIndex = i;
+                        columnIndexes.add(largestNumberOfEmptySeatscolIndex);
+
                     }
                 }
+
+
                 int colNumber = largestNumberOfEmptySeatscolIndex;
                 if ((peopleToBeSeated - largestNumberOfEmptySeats) == 0) {
 
@@ -274,8 +486,10 @@ public class AirplaneSeats {
                     addGroupToFirstClass(columnIndexes, r);
                     break;
                 } else {
-                    columnIndexes.add(colNumber);
+                    //emptySeatsInCol = openConsecutiveSeatsArray(r);
                     peopleToBeSeated = peopleToBeSeated - largestNumberOfEmptySeats;
+
+                    columnIndexes.add(colNumber);
 
                 }
             }
@@ -455,63 +669,80 @@ public class AirplaneSeats {
 
     //tests
     public static void main(String[] args) {
-        AirplaneSeats a = new AirplaneSeats();
-        Reservation placeholder = new Reservation("test", "First", 'W');
-        Reservation placeholder2 = new Reservation("test2", "First", 'W');
-        a.firstClass[3][1] = placeholder;
-        a.firstClass[0][1] = placeholder2;
-        //create reservations
-        Reservation sol = new Reservation("Solomon Alemu", "First", 'W');
-        Reservation wish = new Reservation("Mark Wishom", "First", 'A');
-        Reservation ed = new Reservation("eduardo sanchez", "First", 'M');
-        Reservation brian = new Reservation("brian le", "First", 'W');
-        Reservation noah = new Reservation("noah elena", "First", 'W');
-
-
-        //add first class reservations to APS object and print if they worked
-        sopl(a.searchForFirstOpenSeatWithPreference(sol));
-        sopl(a.searchForFirstOpenSeatWithPreference(wish));
-        sopl(a.searchForFirstOpenSeatWithPreference(ed));
-        sopl(a.searchForFirstOpenSeatWithPreference(brian));
-        sopl(a.searchForFirstOpenSeatWithPreference(noah));
-        sopl("");
-        //print out 2d array of seats
-        for (int row = 0; row < a.firstClass.length; row++) {
-            for (int col = 0; col < a.firstClass[row].length; col++) {
-                if (a.firstClass[row][col] != null) {
-                    sop(col + 1 + firstClassNumsToLetters.get(row) + " " + a.firstClass[row][col].getNameArray()[0] + " ");
-                } else {
-                    sop(col + 1 + firstClassNumsToLetters.get(row) + " empty ");
-                }
-            }
-            sopl("");
+        File test = new File("test.txt");
+        AirplaneSeats a = new AirplaneSeats(test);
+        a.readFromFile();
+        for (Reservation r : a.reservationsInOrder) {
+            sopl(r.getGroupName());
         }
-        sopl("");
-        sopl("");
-        sopl("");
+//        Reservation placeholder = new Reservation("test e", "First", 'W');
+//        Reservation placeholder2 = new Reservation("test e", "First", 'W');
+//        a.firstClass[3][1] = placeholder;
+//        a.firstClass[0][1] = placeholder2;
+//        //create reservations
+//        Reservation sol = new Reservation("Kobe Bryant", "First", 'W');
+//        Reservation wish = new Reservation("Lebron James", "First", 'A');
+//        Reservation ed = new Reservation("Michael Jordan", "First", 'M');
+//        Reservation brian = new Reservation("Will Smith", "First", 'W');
+//        Reservation noah = new Reservation("Chris Brown", "First", 'N');
+//
+//
+//        //add first class reservations to APS object and print if they worked
+//        sopl(a.searchForFirstOpenSeatWithPreference(sol));
+//        sopl(a.searchForFirstOpenSeatWithPreference(wish));
+//        sopl(a.searchForFirstOpenSeatWithPreference(ed));
+//        sopl(a.searchForFirstOpenSeatWithPreference(brian));
+//        sopl(a.searchForFirstOpenSeatWithPreference(noah));
+//        sopl("");
+//        //print out 2d array of seats
+//        for (int row = 0; row < a.firstClass.length; row++) {
+//            for (int col = 0; col < a.firstClass[row].length; col++) {
+//                if (a.firstClass[row][col] != null) {
+//                    sop(col + 1 + firstClassNumsToLetters.get(row) + " " + a.firstClass[row][col].getNameArray()[0] + " ");
+//                } else {
+//                    sop(col + 1 + firstClassNumsToLetters.get(row) + " empty ");
+//                }
+//            }
+//            sopl("");
+//        }
+//        sopl("");
+//        sopl("");
+//        sopl("");
+//
+//        Reservation sol2 = new Reservation("Solomon Alemu", "Economy", 'W');
+//        Reservation wish2 = new Reservation("Mark Wishom", "Economy", 'A');
+//        Reservation ed2 = new Reservation("Eduardo sanchez", "Economy", 'M');
+//        Reservation brian2 = new Reservation("Brian le", "Economy", 'W');
+//        Reservation noah2 = new Reservation("Noah elena", "Economy", 'W');
+//        Reservation noah3 = new Reservation("noah elena", "Economy", 'W');
+//
+//
+//        //add first class reservations to APS object and print if they worked
+//        sopl(a.searchForFirstOpenSeatWithPreference(sol2));
+//        sopl(a.searchForFirstOpenSeatWithPreference(wish2));
+//        sopl(a.searchForFirstOpenSeatWithPreference(ed2));
+//        sopl(a.searchForFirstOpenSeatWithPreference(brian2));
+//        sopl(a.searchForFirstOpenSeatWithPreference(noah2));
+//        sopl(a.searchForFirstOpenSeatWithPreference(noah3));
+//        sopl("");
+//
+//        Reservation squa = new Reservation("the Old Heads", "Roberto Sanchez,Chris Burton,Jermaine g,Clarence Keys", "Economy");
+//        Reservation squa2 = new Reservation("Old Headz", "Qoberto Sanchez,Zhris Burton", "Economy");
+//        Reservation squa3 = new Reservation("Old Heads", "poberto Sanchez,ahris Burton,l a,t a,u a,i a", "Economy");
+//        a.searchForConsecutiveSeats(squa);
+//        a.searchForConsecutiveSeats(squa2);
+//        a.searchForConsecutiveSeats(squa3);
 
-        Reservation sol2 = new Reservation("Solomon Alemu", "Economy", 'W');
-        Reservation wish2 = new Reservation("Mark Wishom", "Economy", 'A');
-        Reservation ed2 = new Reservation("Eduardo sanchez", "Economy", 'M');
-        Reservation brian2 = new Reservation("Brian le", "Economy", 'W');
-        Reservation noah2 = new Reservation("Noah elena", "Economy", 'W');
-        Reservation noah3 = new Reservation("noah elena", "Economy", 'W');
+
+//        a.getOpenSeatsList("f");
+//        a.getOpenSeatsList("e");
+//        sopl("");
+
+        a.getManifest("f");
+        a.getManifest("e");
 
 
-        //add first class reservations to APS object and print if they worked
-        sopl(a.searchForFirstOpenSeatWithPreference(sol2));
-        sopl(a.searchForFirstOpenSeatWithPreference(wish2));
-        sopl(a.searchForFirstOpenSeatWithPreference(ed2));
-        sopl(a.searchForFirstOpenSeatWithPreference(brian2));
-        sopl(a.searchForFirstOpenSeatWithPreference(noah2));
-        sopl(a.searchForFirstOpenSeatWithPreference(noah3));
         sopl("");
-        Reservation squa = new Reservation("Old Heads", "Roberto Sanchez,Chris Burton,Jermaine g,Clarence Keys", "Economy");
-        Reservation squa2 = new Reservation("Old Heads", "Qoberto Sanchez,Zhris Burton", "Economy");
-        Reservation squa3 = new Reservation("Old Heads", "poberto Sanchez,ahris Burton,l a,t a,u a,i a", "Economy");
-        a.searchForConsecutiveSeats(squa);
-        a.searchForConsecutiveSeats(squa2);
-        a.searchForConsecutiveSeats(squa3);
         //print out 2d array of seats
         for (int row = 0; row < a.economy.length; row++) {
             for (int col = 0; col < a.economy[row].length; col++) {
@@ -524,8 +755,9 @@ public class AirplaneSeats {
                 }
             }
             sopl("");
-        }
 
+        }
+        a.writeToFile();
 
     }
 
