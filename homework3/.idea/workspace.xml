@@ -30,7 +30,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/4.22" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/5.4" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -41,10 +41,11 @@
       <recent name="" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/5.4" />
       <recent name="$PROJECT_DIR$/4.22" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.ObserverTester">
+  <component name="RunManager" selected="Application.SliderTester">
     <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
@@ -58,6 +59,13 @@
     </configuration>
     <configuration name="ObserverTester" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="ObserverTester" />
+      <module name="homework3" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SliderTester" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="SliderTester" />
       <module name="homework3" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -86,37 +94,42 @@
     <list>
       <item itemvalue="Application.AnimationTester2" />
       <item itemvalue="Application.ObserverTester" />
+      <item itemvalue="Application.SliderTester" />
       <item itemvalue="Application.zoomTester" />
     </list>
   </component>
   <component name="WindowStateProjectService">
-    <state x="2040" y="201" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1617152470744">
+    <state x="2153" y="120" key="#Project_Structure" timestamp="1617199081405">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state x="2040" y="201" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617152470744" />
-    <state x="2389" y="253" key="#com.intellij.ide.util.MemberChooser" timestamp="1617197814984">
+    <state x="2153" y="120" key="#Project_Structure/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617199081405" />
+    <state x="2040" y="201" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1617199790778">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state x="2389" y="253" key="#com.intellij.ide.util.MemberChooser/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617197814984" />
-    <state width="1347" height="272" key="GridCell.Tab.0.bottom" timestamp="1617198433325">
+    <state x="2040" y="201" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617199790778" />
+    <state x="2389" y="253" key="#com.intellij.ide.util.MemberChooser" timestamp="1617199920869">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state width="1347" height="272" key="GridCell.Tab.0.bottom/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617198433325" />
-    <state width="1347" height="272" key="GridCell.Tab.0.center" timestamp="1617198433324">
+    <state x="2389" y="253" key="#com.intellij.ide.util.MemberChooser/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617199920869" />
+    <state width="1347" height="272" key="GridCell.Tab.0.bottom" timestamp="1617200916348">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state width="1347" height="272" key="GridCell.Tab.0.center/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617198433324" />
-    <state width="1347" height="272" key="GridCell.Tab.0.left" timestamp="1617198433323">
+    <state width="1347" height="272" key="GridCell.Tab.0.bottom/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617200916348" />
+    <state width="1347" height="272" key="GridCell.Tab.0.center" timestamp="1617200916347">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state width="1347" height="272" key="GridCell.Tab.0.left/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617198433323" />
-    <state width="1347" height="272" key="GridCell.Tab.0.right" timestamp="1617198433325">
+    <state width="1347" height="272" key="GridCell.Tab.0.center/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617200916347" />
+    <state width="1347" height="272" key="GridCell.Tab.0.left" timestamp="1617200916346">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state width="1347" height="272" key="GridCell.Tab.0.right/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617198433325" />
-    <state x="2031" y="131" key="SettingsEditor" timestamp="1617151818522">
+    <state width="1347" height="272" key="GridCell.Tab.0.left/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617200916346" />
+    <state width="1347" height="272" key="GridCell.Tab.0.right" timestamp="1617200916347">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state x="2031" y="131" key="SettingsEditor/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617151818522" />
+    <state width="1347" height="272" key="GridCell.Tab.0.right/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617200916347" />
+    <state x="2031" y="131" key="SettingsEditor" timestamp="1617199069778">
+      <screen x="1680" y="25" width="1920" height="1055" />
+    </state>
+    <state x="2031" y="131" key="SettingsEditor/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617199069778" />
   </component>
 </project>
