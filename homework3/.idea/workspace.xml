@@ -45,13 +45,20 @@
       <recent name="$PROJECT_DIR$/4.22" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.SliderTester">
+  <component name="RunManager" selected="Application.MVC">
     <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
     </configuration>
     <configuration name="AnimationTester2" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="AnimationTester2" />
+      <module name="homework3" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MVC" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="MVCTester" />
       <module name="homework3" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -95,6 +102,7 @@
       <item itemvalue="Application.AnimationTester2" />
       <item itemvalue="Application.ObserverTester" />
       <item itemvalue="Application.SliderTester" />
+      <item itemvalue="Application.MVC" />
       <item itemvalue="Application.zoomTester" />
     </list>
   </component>
@@ -103,33 +111,37 @@
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
     <state x="2153" y="120" key="#Project_Structure/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617199081405" />
-    <state x="2040" y="201" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1617199790778">
+    <state x="2040" y="201" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1617203454469">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state x="2040" y="201" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617199790778" />
-    <state x="2389" y="253" key="#com.intellij.ide.util.MemberChooser" timestamp="1617199920869">
+    <state x="2040" y="201" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617203454469" />
+    <state x="2389" y="253" key="#com.intellij.ide.util.MemberChooser" timestamp="1617203057365">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state x="2389" y="253" key="#com.intellij.ide.util.MemberChooser/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617199920869" />
-    <state width="1347" height="272" key="GridCell.Tab.0.bottom" timestamp="1617200916348">
+    <state x="2389" y="253" key="#com.intellij.ide.util.MemberChooser/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617203057365" />
+    <state width="1347" height="272" key="GridCell.Tab.0.bottom" timestamp="1617206247640">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state width="1347" height="272" key="GridCell.Tab.0.bottom/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617200916348" />
-    <state width="1347" height="272" key="GridCell.Tab.0.center" timestamp="1617200916347">
+    <state width="1347" height="272" key="GridCell.Tab.0.bottom/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617206247640" />
+    <state width="1347" height="272" key="GridCell.Tab.0.center" timestamp="1617206247639">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state width="1347" height="272" key="GridCell.Tab.0.center/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617200916347" />
-    <state width="1347" height="272" key="GridCell.Tab.0.left" timestamp="1617200916346">
+    <state width="1347" height="272" key="GridCell.Tab.0.center/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617206247639" />
+    <state width="1347" height="272" key="GridCell.Tab.0.left" timestamp="1617206247638">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state width="1347" height="272" key="GridCell.Tab.0.left/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617200916346" />
-    <state width="1347" height="272" key="GridCell.Tab.0.right" timestamp="1617200916347">
+    <state width="1347" height="272" key="GridCell.Tab.0.left/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617206247638" />
+    <state width="1347" height="272" key="GridCell.Tab.0.right" timestamp="1617206247640">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state width="1347" height="272" key="GridCell.Tab.0.right/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617200916347" />
-    <state x="2031" y="131" key="SettingsEditor" timestamp="1617199069778">
+    <state width="1347" height="272" key="GridCell.Tab.0.right/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617206247640" />
+    <state x="2031" y="131" key="SettingsEditor" timestamp="1617202628850">
       <screen x="1680" y="25" width="1920" height="1055" />
     </state>
-    <state x="2031" y="131" key="SettingsEditor/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617199069778" />
+    <state x="2031" y="131" key="SettingsEditor/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617202628850" />
+    <state x="2385" y="254" width="670" height="676" key="search.everywhere.popup" timestamp="1617206361341">
+      <screen x="1680" y="25" width="1920" height="1055" />
+    </state>
+    <state x="2385" y="254" width="670" height="676" key="search.everywhere.popup/0.25.1680.1025/1680.25.1920.1055@1680.25.1920.1055" timestamp="1617206361341" />
   </component>
 </project>

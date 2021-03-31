@@ -1,7 +1,5 @@
-import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -62,6 +60,11 @@ public class TextFrame extends JFrame implements ChangeListener {
     DataModel dataModel;
     JTextField[] fieldList;
 
+    /**
+     * added stateChanged method so view would be updated
+     *
+     * @param e event
+     */
     public void stateChanged(ChangeEvent e) {
         ArrayList<Double> a = dataModel.getData();
         int i = 0;
